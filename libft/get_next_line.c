@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdescamp <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 16:19:58 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/01/07 16:06:35 by hdescamp         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:31:54 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ char	*ft_free(char *buffer, char *buf)
 {
 	char	*temp;
 
-	temp = ft_sstrjoin(buffer, buf);
+	temp = ft_strjoin(buffer, buf);
 	free(buffer);
 	return (temp);
 }
