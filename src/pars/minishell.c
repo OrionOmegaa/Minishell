@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/05/16 14:56:49 by mpoirier         ###   ########.fr       */
+/*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/05/16 14:57:30 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "../../includes/minishell.h"
 
-# include <unistd.h>
-# include "libft/libft.h"
-
-#endif
+int main(int argc, char **argv)
+{
+    
+}
