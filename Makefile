@@ -2,11 +2,11 @@
 
 #Flags
 
-CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g -lreadline
 
 #Files
 
-FILES= $(SRC_DIR)/minishell.c \
+FILES= $(SRC_DIR)/exec/minishell.c \
 
 OBJS=$(FILES:.c=.o)
 
