@@ -38,6 +38,18 @@
 # define _GNU_SOURCE
 # define MAX_ARGS 42
 
-//
+//Utils
+
+int     count_args(char *input);
+void    free_args(char **args);
+
+//Exec
+
+void    execute_command(char *input, char **env);
+char    *find_command_path(char *cmd);
+
+//Parse
+
+char    **split_args(char *input);
 
 #endif
