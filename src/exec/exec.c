@@ -85,7 +85,7 @@ void execute_command(char *input, char **env)
     pid = fork();
     if (!args || !args[0])
         return;
-    if (strcmp(args[0], "exit") == 0 || strcmp(args[0], "Exit") == 0)
+    if (ft_strncmp(args[0], "exit", 5) == 0 || ft_strncmp(args[0], "Exit", 5) == 0)
     {
         free_args(args);
         exit(0);
