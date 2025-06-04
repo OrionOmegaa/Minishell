@@ -32,16 +32,43 @@ int count_args(char *input)
     }
     return count;
 }
-
-void free_args(char **args)
+void exit_with_error(const char *msg, int code)
 {
-    int i;
+    perror(msg);
+    exit(code);
+}
 
-    i = 0;
-    while (args[i])
+void	ft_free_tab(char **tab)
+{
+	size_t	i;
+
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
+int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
+{
+    t_cmd_data *tmp;
+
+    while (exe->cmds)
     {
-        free(args[i]);
-        i++;
+        tmp = exe->cmds->next;
+        free_cmd(exe->cmds);
+        exe->cmds = tmp;
     }
-    free(args);
+    if (free_envp && exe->envp)
+    {
+        int i = 0;
+        while (exe->envp[i])
+            free(exe->envp[i++]);
+        free(exe->envp);
+    }
+    if (err_msg)
+        write(2, err_msg, strlen(err_msg));
+    return ret_val;
 }

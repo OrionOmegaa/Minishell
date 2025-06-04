@@ -38,18 +38,93 @@
 # define _GNU_SOURCE
 # define MAX_ARGS 42
 
+//Struct Pars
+
+typedef struct s_pars_data
+{
+    t_list *commands;
+}		t_pars_data;
+
+
+typedef struct s_command_data
+{
+    char **raw_args;
+    t_list *redir_in;
+    t_list *redir_out;
+}       t_command_data;
+
+typedef struct s_cmd_data
+{
+    char **args;
+    char *path;
+    int fd_in;
+    int fd_out;
+    int skip_cmd;
+    pid_t pid;
+    struct s_cmd_data *next;
+} t_cmd_data;
+
+typedef struct s_env_data
+{
+    char *key;
+    char *value;
+}		t_env_data;
+
+//Struct Exec
+
+typedef struct s_redir
+{
+    char *file;
+    int   append;
+    int   here_doc;
+} t_redir;
+
+typedef struct s_exec_data
+{
+}		t_exec_data;
+
+typedef struct s_exe_data
+{
+    t_pars_data *pars;
+    t_env_data **env;
+    char **envp;
+    int prev_pipe;
+    t_cmd_data *cmds;
+}		t_exe_data;
+
+
 //Utils
 
+void    exit_with_error(const char *msg, int code);
 int     count_args(char *input);
-void    free_args(char **args);
+int     free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg);
 
 //Exec
 
-void    execute_command(char *input, char **env);
-char    *find_command_path(char *cmd);
+t_exe_data  init_exe(t_env_data **env, t_pars_data *pars);
+void        ft_free_tab(char **tab);
+void        exec(char *cmd, char **env);
+int         open_infiles(t_list *redir_in);
+int         open_outfiles(t_list *redir_out);
+int         is_builtin(const char *cmd);
+int         exec_builtin(t_cmd_data *cmd, t_exe_data *exe);
+t_cmd_data  *cmd_new(char **args, char *path, int fd_in, int fd_out);
+void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
+
+//Built in
+
+int builtin_echo(char **args);
+int builtin_cd(char **args, t_exe_data *exe);
+int builtin_pwd(void);
+int builtin_export(char **args, t_exe_data *exe);
+int builtin_unset(char **args, t_exe_data *exe);
+int builtin_env(t_exe_data *exe);
+int builtin_exit(char **args);
 
 //Parse
 
+void    minishell(char **env);
+int     find_fd(char *file, int in_or_out);
 char    **split_args(char *input);
 
 #endif

@@ -12,6 +12,22 @@
 
 #include "../../includes/minishell.h"
 
+void    minishell(char **env)
+{
+    char    *line;
+
+    while (1)
+    {
+        line = readline("\001\033[1;36m\002Minishell> \001\033[0m\002");
+        if (!line)
+            break;
+        if (*line)
+            add_history(line);
+        executor(line, env);
+        free(line);
+    }
+}
+
 char **split_args(char *input)
 {
     int     argc;

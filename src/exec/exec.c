@@ -12,99 +12,134 @@
 
 #include "../../includes/minishell.h"
 
-char *find_command_path(char *cmd)
+static t_cmd_data *interpreter(t_pars_data *cmd)
 {
-    char    buffer[4096];
-    char    *res;
-    char    *path;
-    char    *start;
-    int     i;
-    int     len;
-    int     j;
-    int     k;
-    int     m;
-
-    i = 0;
-    if (!cmd)
-        return NULL;
-
-    if (cmd[0] == '/' || cmd[0] == '.')
+    t_cmd_data *cmds = NULL;
+    t_list *lst = cmd->commands;
+    while (lst)
     {
-        if (access(cmd, X_OK) == 0)
-            return cmd;
-        return NULL;
-    }
-    path = getenv("PATH");
-    if (!path)
-        return NULL;
-    while (*path)
-    {
-        start = path;
-        while (*path && *path != ':')
-            path++;
-        len = path - start;
-        i = 0;
-        while (i < len && i < 4096 - 1)
+        t_command_data *cur = (t_command_data *)lst->content;
+        int skip = 0;
+        int fd_in = open_infiles(cur->redir_in);
+        if (fd_in == -1)
+            skip = 1;
+        int fd_out = open_outfiles(cur->redir_out);
+        if (fd_out == -1)
+            skip = 1;
+        if (!skip)
         {
-            buffer[i] = start[i];
-            i++;
+            char **args = extract_args(cur->raw_args);
+            char *path = find_path(args[0]);
+            if (!path)
+                path = args[0];
+            t_cmd_data *node = cmd_new(args, path, fd_in, fd_out);
+            cmd_add_back(&cmds, node);
         }
-        buffer[i] = '\0';
-        j = 0;
-        while (buffer[j]) j++;
-        buffer[j++] = '/';
-        k = 0;
-        while (cmd[k] && j < 4096 - 1)
-            buffer[j++] = cmd[k++];
-        buffer[j] = '\0';
-        if (access(buffer, X_OK) == 0)
-        {
-            res = malloc(j + 1);
-            m = 0;
-            while (m <= j)
-            {
-                res[m] = buffer[m];
-                m++;
-            }
-            return res;
-        }
-        if (*path == ':')
-            path++;
+        lst = lst->next;
     }
-    return NULL;
+    return (cmds);
 }
 
-void execute_command(char *input, char **env)
+static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 {
-    char    **args;
-    pid_t   pid;
-    char    *cmd_path;
-    int     status;
-
-    args = split_args(input);
-    pid = fork();
-    if (!args || !args[0])
-        return;
-    if (ft_strncmp(args[0], "exit", 5) == 0 || ft_strncmp(args[0], "Exit", 5) == 0)
+    if (cmd->fd_in != -1)
     {
-        free_args(args);
-        exit(0);
+        if (dup2(cmd->fd_in, STDIN_FILENO) == -1)
+            exit_with_error("dup2 fd_in", 1);
     }
-    if (pid == 0)
+    else if (exe->prev_pipe != -1)
     {
-        cmd_path = find_command_path(args[0]);
-        if (!cmd_path)
-        {
-            write(2, "Command Not Found\n", 19);
-            exit(127);
-        }
-        execve(cmd_path, args, env);
-        perror("Execve");
-        exit(1);
-    } 
-    else if (pid > 0)
-        waitpid(pid, &status, 0);
+        if (dup2(exe->prev_pipe, STDIN_FILENO) == -1)
+            exit_with_error("dup2 pipe in", 1);
+    }
+    if (cmd->fd_out != -1)
+    {
+        if (dup2(cmd->fd_out, STDOUT_FILENO) == -1)
+            exit_with_error("dup2 fd_out", 1);
+    }
+    else if (fds[1] != -1)
+    {
+        if (dup2(fds[1], STDOUT_FILENO) == -1)
+            exit_with_error("dup2 pipe out", 1);
+    }
+    if (exe->prev_pipe != -1)
+        close(exe->prev_pipe);
+    if (fds[0] != -1)
+        close(fds[0]);
+    if (fds[1] != -1)
+        close(fds[1]);
+    if (is_builtin(cmd->args[0]))
+    {
+        int status = exec_builtin(cmd, exe);
+        exit(status);
+    }
     else
-        perror("Fork");
-    free_args(args);
+    {
+        execve(cmd->path, cmd->args, exe->envp);
+        perror("execve");
+        exit(127);
+    }
+}
+
+static void parent_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
+{
+    if (exe->prev_pipe != -1)
+    {
+        close(exe->prev_pipe);
+        exe->prev_pipe = -1;
+    }
+    if (fds[1] != -1)
+        close(fds[1]);
+    exe->prev_pipe = fds[0];
+    if (cmd->fd_in != -1)
+        close(cmd->fd_in);
+    if (cmd->fd_out != -1)
+        close(cmd->fd_out);
+}
+
+static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
+{
+    t_cmd_data *cmds;
+    int fds[2];
+
+    cmds = interpreter(cmd);
+    while (cmds)
+    {
+        if (cmds->skip_cmd)
+        {
+            cmds = cmds->next;
+            continue;
+        }
+        if (pipe(fds) < 0)
+            exit_with_error("pipe", 1);
+        else if (!cmds->next)
+        {
+            fds[0] = -1;
+            fds[1] = -1;
+        }
+        cmds->pid = fork();
+        if (cmds->pid < 0)
+            exit_with_error("fork", 1);
+        if (!cmds->pid)
+            child_process(exe, cmds, fds);
+        else
+            parent_process(exe, cmds, fds);
+        cmds = cmds->next;
+    }
+    cmds = exe->cmds;
+    while (cmds)
+    {
+        if (!cmds->skip_cmd)
+            waitpid(cmds->pid, NULL, 0);
+        cmds = cmds->next;
+    }
+}
+    
+int    executor(t_env_data **env, t_pars_data *pars)
+{
+    t_exe_data    exe;
+
+    exe = init_exe(env, pars);
+    execute_pipeline(&exe, exe.pars);
+    return (free_exe(&exe, 0, 0, NULL));
 }

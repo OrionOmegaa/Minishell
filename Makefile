@@ -6,8 +6,9 @@ CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g -lreadline
 
 #Files
 
-FILES= $(SRC_DIR)/exec/minishell.c $(SRC_DIR)/exec/exec.c $(SRC_DIR)/exec/minishell_utils.c \
-	$(SRC_DIR)/pars/minishell_pars.c \
+FILES= $(SRC_DIR)/exec/minishell.c $(SRC_DIR)/exec/exec.c $(SRC_DIR)/exec/minishell_utils.c $(SRC_DIR)/exec/exec_init.c \
+	$(SRC_DIR)/exec/open.c $(SRC_DIR)/exec/builtin.c $(SRC_DIR)/exec/builtin_utils.c $(SRC_DIR)/exec/node.c \
+	$(SRC_DIR)/pars/minishell_pars.c $(SRC_DIR)/pars/fd.c\
 
 OBJS=$(FILES:.c=.o)
 
