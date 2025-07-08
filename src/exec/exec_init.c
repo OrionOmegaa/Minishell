@@ -20,5 +20,25 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     exe.env = env;
     exe.prev_pipe = -1;
     exe.cmds = NULL;
-    return exe;
+    return (exe);
+}
+
+t_env_data *init_env(char **env)
+{
+    t_env_data *env = NULL;
+
+    for (int i = 0; envp[i]; i++)
+    {
+        char *equal = strchr(envp[i], '=');
+        if (equal)
+        {
+            size_t key_len = equal - envp[i];
+            char *key = strndup(envp[i], key_len);
+            char *value = ft_strdup(equal + 1);
+            env_set(&env, key, value);
+            free(key);
+            free(value);
+        }
+    }
+    return (env);
 }

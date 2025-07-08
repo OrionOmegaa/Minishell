@@ -16,6 +16,7 @@ int main(int ac, char **av, char **env)
 {
     if (ac != 1 && av)
         return (printf("Wrong Number Of Argument\nUse : ./Minishell\n"));
+    init_env(env);
     minishell(env);
     return 0;
 }

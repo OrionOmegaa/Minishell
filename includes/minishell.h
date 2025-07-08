@@ -110,6 +110,7 @@ int         is_builtin(const char *cmd);
 int         exec_builtin(t_cmd_data *cmd, t_exe_data *exe);
 t_cmd_data  *cmd_new(char **args, char *path, int fd_in, int fd_out);
 void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
+t_env_data  *init_env(char **env);
 
 //Built in
 
