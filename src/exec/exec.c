@@ -28,7 +28,7 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
             skip = 1;
         if (!skip)
         {
-            char **args = extract_args(cur->raw_args);
+            char **args = extract_args(*cur->raw_args);
             char *path = find_path(args[0]);
             if (!path)
                 path = args[0];

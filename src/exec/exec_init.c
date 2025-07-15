@@ -23,7 +23,7 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     return (exe);
 }
 
-t_env_data *init_env(char **env)
+t_env_data *init_env(char **envp)
 {
     t_env_data *env = NULL;
 

@@ -35,6 +35,7 @@
 # include <termios.h>
 # include <unistd.h>
 # include "libft/libft.h"
+# include "libft/ft_printf.h"
 # define _GNU_SOURCE
 # define MAX_ARGS 42
 
@@ -111,6 +112,7 @@ int         exec_builtin(t_cmd_data *cmd, t_exe_data *exe);
 t_cmd_data  *cmd_new(char **args, char *path, int fd_in, int fd_out);
 void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
 t_env_data  *init_env(char **env);
+int         executor(t_env_data **env, t_pars_data *pars);
 
 //Built in
 
@@ -126,6 +128,9 @@ int builtin_exit(char **args);
 
 void    minishell(char **env);
 int     find_fd(char *file, int in_or_out);
-char    **split_args(char *input);
+char    **extract_args(const char *raw_args);
+void    env_set(t_env_data **env, char *key, char *value);
+void    env_unset(t_env_data **env, char *key);
+char    *find_path(const char *cmd);
 
 #endif

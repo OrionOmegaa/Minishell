@@ -50,6 +50,24 @@ void	ft_free_tab(char **tab)
 	}
 	free(tab);
 }
+void free_cmd(t_cmd_data *cmd)
+{
+    int i = 0;
+
+    if (cmd->args)
+    {
+        while (cmd->args[i])
+            free(cmd->args[i++]);
+        free(cmd->args);
+    }
+    if (cmd->path)
+        free(cmd->path);
+    if (cmd->fd_in > 2)
+        close(cmd->fd_in);
+    if (cmd->fd_out > 2)
+        close(cmd->fd_out);
+    free(cmd);
+}
 
 int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
 {

@@ -21,14 +21,17 @@ int builtin_export(char **args, t_exe_data *exe)
         int j = 0;
         while (exe->env[j])
         {
-            printf("declare -x %s\n", exe->env[j]->var);
+            if (exe->env[j]->value)
+                ft_printf("declare -x %s=\"%s\"\n", exe->env[j]->key, exe->env[j]->value);
+            else
+                ft_printf("declare -x %s\n", exe->env[j]->key);
             j++;
         }
         return 0;
     }
     while (args[i])
     {
-        char *equal_sign = strchr(args[i], '=');
+        char *equal_sign = ft_strchr(args[i], '=');
         if (equal_sign)
         {
             size_t key_len = equal_sign - args[i];
@@ -36,7 +39,7 @@ int builtin_export(char **args, t_exe_data *exe)
             char *value = equal_sign + 1;
             if (key_len >= sizeof(key))
                 key_len = sizeof(key) - 1;
-            strncpy(key, args[i], key_len);
+            ft_strlcpy(key, args[i], key_len);
             key[key_len] = '\0';
 
             env_set(exe->env, key, value);
