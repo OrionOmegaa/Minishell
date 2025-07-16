@@ -83,6 +83,5 @@ int builtin_exit(char **args)
 
     if (args[1])
         status = ft_atoi(args[1]);
-
     exit(status);
 }

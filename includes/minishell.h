@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/06/26 13:52:09 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/16 21:41:05 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ typedef struct s_pars_data
 {
     t_list *commands;
 }		t_pars_data;
-
 
 typedef struct s_command_data
 {
@@ -126,11 +125,27 @@ int builtin_exit(char **args);
 
 //Parse
 
-void    minishell(char **env);
+void    minishell(t_env_data **env);
 int     find_fd(char *file, int in_or_out);
 char    **extract_args(const char *raw_args);
 void    env_set(t_env_data **env, char *key, char *value);
 void    env_unset(t_env_data **env, char *key);
 char    *find_path(const char *cmd);
+int	ft_isspace(char c);
+int	is_quote(char c);
+
+// parse
+t_redir *new_redir(char *file, int append, int here_doc);
+t_command_data *new_command_data(void);
+int add_redirection(t_list **redir_list, char *file, int append, int here_doc);
+t_command_data *pars_single_command(char *cmd_str);
+char *get_next_token(char *str, int *index);
+int is_redirect_char(char c);
+char **split_by_pipes(char *line, int *cmd_count);
+int parse_command_line(t_pars_data *pars, char *line);
+void free_redir(void *content);
+void free_command_data(void *content);
+void free_pars_data(t_pars_data *pars);
+t_pars_data *init_pars_data(char *line);
 
 #endif

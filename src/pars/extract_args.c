@@ -12,18 +12,18 @@
 
 #include "../../includes/minishell.h"
 
-static int	ft_isspace(char c)
+int	ft_isspace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
 		|| c == '\v');
 }
 
-static int	is_quote(char c)
+int	is_quote(char c)
 {
 	return (c == '"' || c == '\'');
 }
 
-static int count_args(const char *str, int count)
+static int pars_count_args(const char *str, int count)
 {
     bool in_word;
     bool in_quotes;
@@ -147,7 +147,7 @@ char **extract_args(const char *raw_args)
 
     if (!raw_args)
         return (NULL);
-    argc = count_args(raw_args, 0);
+    argc = pars_count_args(raw_args, 0);
     if (argc == 0)
         return (NULL);
     args = malloc((argc + 1) * sizeof(char *));

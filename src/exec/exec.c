@@ -26,13 +26,14 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
         int fd_out = open_outfiles(cur->redir_out);
         if (fd_out == -1)
             skip = 1;
-        if (!skip)
+        if (skip)
         {
-            char **args = extract_args(*cur->raw_args);
+            char **args = cur->raw_args;
             char *path = find_path(args[0]);
             if (!path)
                 path = args[0];
             t_cmd_data *node = cmd_new(args, path, fd_in, fd_out);
+            //printf("Condition: %s\n", (!node) ? "false" : "true");
             cmd_add_back(&cmds, node);
         }
         lst = lst->next;
@@ -103,7 +104,7 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
     int fds[2];
 
     cmds = interpreter(cmd);
-    while (cmds)
+    while (cmds) /*la boucle la donc cmds vide*/
     {
         if (cmds->skip_cmd)
         {

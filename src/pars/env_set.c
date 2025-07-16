@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tesy.c                                             :+:      :+:    :+:   */
+/*   env_set.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/13 19:00:54 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/16 21:35:57 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void    env_unset(t_env_data **env, char *key)
         free (*env);
         return ;
     }
-    else if (is_known(*env, key) == -1)
+    else if (is_known(env, key) == -1)
         return ;
     int len = env_len(*env);
     t_env_data *res = (env_copy((*env), len + 1, key));
