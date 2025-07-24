@@ -150,7 +150,7 @@ char **extract_args(const char *raw_args)
     argc = pars_count_args(raw_args, 0);
     if (argc == 0)
         return (NULL);
-    args = malloc((argc + 1) * sizeof(char *));
+    args = malloc((argc + 1) * sizeof(char *) + 1);
     if (!args)
         return (NULL);
     current = raw_args;

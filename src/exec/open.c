@@ -12,12 +12,42 @@
 
 #include "../../includes/minishell.h"
 
+int handle_heredoc(char *delimiter)
+{
+    int pipefd[2];
+    char *line;
+    
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe");
+        return -1;
+    }
+    printf("DEBUG: Here-doc démarré, délimiteur='%s'\n", delimiter);
+    while ((line = readline("> ")) != NULL)
+    {
+        printf("DEBUG: Lu ligne '%s'\n", line);
+        if (strcmp(line, delimiter) == 0)
+        {
+            printf("DEBUG: Délimiteur trouvé !\n");
+            free(line);
+            break;
+        }
+        write(pipefd[1], line, strlen(line));
+        write(pipefd[1], "\n", 1);
+        free(line);
+    }
+    close(pipefd[1]);
+    return pipefd[0];
+}
+
 int open_outfiles(t_list *redir_out)
 {
-    int     fd = -1;
+    int     fd = STDOUT_FILENO;
     int     tmp_fd;
     t_redir *redir;
 
+    if (!redir_out)
+        return STDOUT_FILENO;
     while (redir_out)
     {
         redir = (t_redir *)redir_out->content;
@@ -28,11 +58,11 @@ int open_outfiles(t_list *redir_out)
         if (tmp_fd == -1)
         {
             perror(redir->file);
-            if (fd != -1)
+            if (fd != STDOUT_FILENO)
                 close(fd);
             return -1;
         }
-        if (fd != -1)
+        if (fd != STDOUT_FILENO)
             close(fd);
         fd = tmp_fd;
         redir_out = redir_out->next;
@@ -42,27 +72,34 @@ int open_outfiles(t_list *redir_out)
 
 int open_infiles(t_list *redir_in)
 {
-    int     fd = -1;
-    int     tmp_fd;
+    int fd = STDIN_FILENO;
+    int tmp_fd;
     t_redir *redir;
+
+    if (!redir_in)
+        return STDIN_FILENO;
 
     while (redir_in)
     {
         redir = (t_redir *)redir_in->content;
-        if (!redir->here_doc)
+        
+        if (redir->here_doc)
         {
-            tmp_fd = open(redir->file, O_RDONLY);
-            if (tmp_fd == -1)
-            {
-                perror(redir->file);
-                if (fd != -1)
-                    close(fd);
-                return -1;
-            }
-            if (fd != -1)
-                close(fd);
-            fd = tmp_fd;
+            printf("DEBUG: Traitement here_doc '%s'\n", redir->file);
+            tmp_fd = handle_heredoc(redir->file);
         }
+        else
+            tmp_fd = open(redir->file, O_RDONLY);
+        if (tmp_fd == -1)
+        {
+            perror(redir->file);
+            if (fd != STDIN_FILENO)
+                close(fd);
+            return -1;
+        }
+        if (fd != STDIN_FILENO)
+            close(fd);
+        fd = tmp_fd;
         redir_in = redir_in->next;
     }
     return fd;

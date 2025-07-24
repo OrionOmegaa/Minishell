@@ -38,6 +38,18 @@ void exit_with_error(const char *msg, int code)
     exit(code);
 }
 
+void free_env_data(t_env_data *env)
+{
+    if (!env)
+        return;
+    for (int i = 0; env[i].key != NULL; i++)
+    {
+        free(env[i].key);
+        free(env[i].value);
+    }
+    free(env);
+}
+
 void	ft_free_tab(char **tab)
 {
 	size_t	i;
@@ -52,15 +64,30 @@ void	ft_free_tab(char **tab)
 }
 void free_cmd(t_cmd_data *cmd)
 {
-    int i = 0;
-
+    if (!cmd)
+        return;
+    if (cmd->args && cmd->path && cmd->args[0] == cmd->path) {
+        exit(1);
+    }
+    int path_in_args = 0;
+    if (cmd->args && cmd->path)
+    {
+        for (int j = 0; cmd->args[j]; j++)
+        {
+            if (cmd->args[j] == cmd->path)
+            {
+                path_in_args = 1;
+                break;
+            }
+        }
+    }
     if (cmd->args)
     {
-        while (cmd->args[i])
-            free(cmd->args[i++]);
+        for (int i = 0; cmd->args[i]; i++)
+            free(cmd->args[i]);
         free(cmd->args);
     }
-    if (cmd->path)
+    if (cmd->path && !path_in_args)
         free(cmd->path);
     if (cmd->fd_in > 2)
         close(cmd->fd_in);

@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/16 21:41:05 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:34:23 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ t_cmd_data  *cmd_new(char **args, char *path, int fd_in, int fd_out);
 void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
 t_env_data  *init_env(char **env);
 int         executor(t_env_data **env, t_pars_data *pars);
+void        free_cmd(t_cmd_data *cmd);
+void free_env_data(t_env_data *env);
 
 //Built in
 

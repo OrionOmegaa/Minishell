@@ -36,8 +36,6 @@ t_env_data *init_env(char **envp)
             char *key = strndup(envp[i], key_len);
             char *value = ft_strdup(equal + 1);
             env_set(&env, key, value);
-            free(key);
-            free(value);
         }
     }
     return (env);

@@ -20,7 +20,7 @@ static char *join_path(const char *dir, const char *file)
 
     dir_len = ft_strlen(dir);
     len = dir_len + ft_strlen(file) + 2;
-    res = malloc(len * sizeof(char));
+    res = malloc(len * sizeof(char) + 1);
     if(!res)
         return (NULL);
     ft_strlcpy(res, dir, len);

@@ -16,7 +16,7 @@ t_cmd_data *cmd_new(char **args, char *path, int fd_in, int fd_out)
 {
     t_cmd_data *new;
 
-    new = malloc(sizeof(t_cmd_data));
+    new = malloc(sizeof(t_cmd_data) + 1);
     if (!new)
         return (NULL);
     new->args = args;

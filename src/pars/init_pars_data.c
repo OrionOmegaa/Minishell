@@ -87,46 +87,67 @@ t_command_data *pars_single_command(char *cmd_str)
     {
         if (current[i] == '<')
         {
-            i++;
-            while (current[i] && (current[i] == ' '))
-                i++;
-            token = get_next_token(&current[i], &i);
-            if (token)
+            if (current[i + 1] == '<')  // here_doc
             {
-                add_redirection(&cmd->redir_out, token, 1, 0);
-                free(token);
+                i++; // skip second '<'
+                while (current[i] && (current[i] == ' '))
+                    i++;
+                token = get_next_token(&current[i], &i);
+                if (token)
+                {       
+                    add_redirection(&cmd->redir_in, token, 0, 1);  // here_doc
+                    free(token);
+                }
             }
-            else
+            else  // redirection simple
             {
-                // Redirection simple
                 while (current[i] && (current[i] == ' ' || current[i] == '\t'))
                     i++;
                 token = get_next_token(&current[i], &i);
                 if (token)
                 {
-                    add_redirection(&cmd->redir_out, token, 0, 0);
+                    add_redirection(&cmd->redir_in, token, 0, 0);  // input normal
+                    free(token);
+                }
+            }
+        }
+        else if (current[i] == '>')
+        {       
+            if (current[i + 1] == '>')  // append
+            {
+                i++; // skip second '>'
+                while (current[i] && (current[i] == ' '))
+                    i++;
+                token = get_next_token(&current[i], &i);
+                if (token)
+                {
+                    add_redirection(&cmd->redir_out, token, 1, 0);  // append
+                    free(token);
+                }
+            }
+            else  // overwrite
+            {
+                while (current[i] && (current[i] == ' ' || current[i] == '\t'))
+                    i++;
+                token = get_next_token(&current[i], &i);
+                if (token)
+                {
+                    add_redirection(&cmd->redir_out, token, 0, 0);  // overwrite
                     free(token);
                 }
             }
         }
         else
-        {
-            // Caractère normal, on le copie
             clean_cmd[j++] = current[i++];
-        }
     }
     clean_cmd[j] = '\0';
-    
-    // Extraire les arguments de la commande nettoyée
     cmd->raw_args = extract_args(clean_cmd);
     free(clean_cmd);
-    
     if (!cmd->raw_args)
     {
         free_command_data(cmd);
         return (NULL);
     }
-    
     return (cmd);
 }
 
@@ -137,16 +158,18 @@ char *get_next_token(char *str, int *index)
     char *token;
     bool in_quotes = false;
     char quote_char = 0;
-    
+    if (!str || !index || *index < 0)
+        return NULL;
+    int str_len = strlen(str);
+    if (*index >= str_len) {
+        return NULL;  // Fin de chaîne atteinte
+    }
     // Ignorer les espaces
-    while (str[start] && (str[start] == ' ' || str[start] == '\t'))
+    while (str[start] && (str[start] == ' ' || str[start] == '\t')) // ligne 142
         start++;
-    
     if (!str[start])
         return (NULL);
-    
     *index = start;
-    
     // Compter la longueur du token
     while (str[*index] && ((!ft_isspace(str[*index]) && !is_redirect_char(str[*index])) || in_quotes))
     {
@@ -237,7 +260,7 @@ char **split_by_pipes(char *line, int *cmd_count)
     }
     
     // Dernière commande
-    commands[cmd_idx] = ft_substr(line, start, i - start);
+    commands[cmd_idx] = ft_substr(line, start, i - start + 1);
     if (!commands[cmd_idx])
     {
         while (cmd_idx > 0)
@@ -328,6 +351,7 @@ void free_pars_data(t_pars_data *pars)
         return ;
     if (pars->commands)
         ft_lstclear(&pars->commands, free_command_data);
+    free(pars);
 }
 
 t_pars_data *init_pars_data(char *line)

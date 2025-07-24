@@ -12,6 +12,35 @@
 
 #include "../../includes/minishell.h"
 
+static char **duplicate_args(char **original_args)
+{
+    if (!original_args)
+        return NULL;
+    
+    int count = 0;
+    while (original_args[count])
+        count++;
+    
+    char **new_args = malloc((count + 1) * sizeof(char *));
+    if (!new_args)
+        return NULL;
+    
+    for (int i = 0; i < count; i++)
+    {
+        new_args[i] = ft_strdup(original_args[i]);
+        if (!new_args[i])
+        {
+            for (int j = 0; j < i; j++)
+                free(new_args[j]);
+            free(new_args);
+            return NULL;
+        }
+    }
+    
+    new_args[count] = NULL;
+    return new_args;
+}
+
 static t_cmd_data *interpreter(t_pars_data *cmd)
 {
     t_cmd_data *cmds = NULL;
@@ -20,20 +49,25 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
     {
         t_command_data *cur = (t_command_data *)lst->content;
         int skip = 0;
+        if (cur->redir_in)
+        {
+            t_redir *redir = (t_redir *)cur->redir_in->content;
+            printf("DEBUG: redir_in détectée - file='%s', here_doc=%d\n", 
+                   redir->file, redir->here_doc);
+        }
         int fd_in = open_infiles(cur->redir_in);
         if (fd_in == -1)
             skip = 1;
         int fd_out = open_outfiles(cur->redir_out);
         if (fd_out == -1)
             skip = 1;
-        if (skip)
+        if (!skip)
         {
-            char **args = cur->raw_args;
+            char **args = duplicate_args(cur->raw_args);
             char *path = find_path(args[0]);
             if (!path)
-                path = args[0];
+                path = ft_strdup(args[0]);
             t_cmd_data *node = cmd_new(args, path, fd_in, fd_out);
-            //printf("Condition: %s\n", (!node) ? "false" : "true");
             cmd_add_back(&cmds, node);
         }
         lst = lst->next;
@@ -92,48 +126,74 @@ static void parent_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
     if (fds[1] != -1)
         close(fds[1]);
     exe->prev_pipe = fds[0];
-    if (cmd->fd_in != -1)
+    if (cmd->fd_in != -1 && cmd->fd_in != STDIN_FILENO)
         close(cmd->fd_in);
-    if (cmd->fd_out != -1)
+    if (cmd->fd_out != -1 && cmd->fd_out != STDOUT_FILENO)
         close(cmd->fd_out);
+}
+
+static void  free_cmd_list(t_cmd_data *cmd_list)
+{
+    t_cmd_data *current = cmd_list;
+    t_cmd_data *next;
+    
+    while (current)
+    {
+        next = current->next;
+        free_cmd(current);
+        current = next;
+    }
 }
 
 static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
 {
     t_cmd_data *cmds;
+    t_cmd_data *current;
     int fds[2];
 
     cmds = interpreter(cmd);
-    while (cmds) /*la boucle la donc cmds vide*/
+    if (!cmds)
+        return ;
+    if (!cmds->next && cmds->args && strcmp(cmds->args[0], "exit") == 0)
     {
-        if (cmds->skip_cmd)
+        free_cmd_list(cmds);
+        exit(0);
+    }
+    current = cmds;
+    while (current)
+    {
+        if (current->skip_cmd)
         {
-            cmds = cmds->next;
+            current = current->next;
             continue;
         }
-        if (pipe(fds) < 0)
-            exit_with_error("pipe", 1);
-        else if (!cmds->next)
+        if (current->next)
+        {
+            if (pipe(fds) < 0)
+                exit_with_error("pipe", 1);
+        }
+        else
         {
             fds[0] = -1;
             fds[1] = -1;
         }
-        cmds->pid = fork();
-        if (cmds->pid < 0)
+        current->pid = fork();
+        if (current->pid < 0)
             exit_with_error("fork", 1);
-        if (!cmds->pid)
-            child_process(exe, cmds, fds);
+        if (!current->pid)
+            child_process(exe, current, fds);
         else
-            parent_process(exe, cmds, fds);
-        cmds = cmds->next;
+            parent_process(exe, current, fds);
+        current = current->next;
     }
-    cmds = exe->cmds;
-    while (cmds)
+    current = cmds;
+    while (current)
     {
-        if (!cmds->skip_cmd)
-            waitpid(cmds->pid, NULL, 0);
-        cmds = cmds->next;
+        if (!current->skip_cmd)
+            waitpid(current->pid, NULL, 0);
+        current = current->next;
     }
+    free_cmd_list(cmds);
 }
     
 int    executor(t_env_data **env, t_pars_data *pars)
@@ -142,5 +202,6 @@ int    executor(t_env_data **env, t_pars_data *pars)
 
     exe = init_exe(env, pars);
     execute_pipeline(&exe, exe.pars);
-    return (free_exe(&exe, 0, 0, NULL));
+    free_exe(&exe, 0, 0, NULL);
+    return (0);
 }
