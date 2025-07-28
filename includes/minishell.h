@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/18 14:34:23 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/28 10:43:31 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 //includes
 
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <pwd.h>
 # include <ctype.h>
 # include <dirent.h>
@@ -34,6 +32,8 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include "libft/libft.h"
 # include "libft/ft_printf.h"
 # define _GNU_SOURCE
