@@ -76,7 +76,7 @@ int exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
         return builtin_unset(cmd->args, exe);
     else if (ft_strncmp(builtin, "env", 4) == 0)
         return builtin_env(exe);
-    else if (ft_strncmp(builtin, "exit", 5) == 0)
+    else if (ft_strncmp(builtin, "exit", 4) == 0)
         return builtin_exit(cmd->args);
     return -1;
 }

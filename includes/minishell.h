@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/28 10:43:31 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:12:40 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,15 @@ typedef struct s_env_data
     char *value;
 }		t_env_data;
 
+typedef struct  s_shell
+{
+    t_env_data  *env;
+    int         running;
+    int         exit_status;
+}               t_shell;
+
+extern t_shell g_shell;
+
 //Struct Exec
 
 typedef struct s_redir
@@ -113,8 +122,6 @@ void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
 t_env_data  *init_env(char **env);
 int         executor(t_env_data **env, t_pars_data *pars);
 void        free_cmd(t_cmd_data *cmd);
-void free_env_data(t_env_data *env);
-
 //Built in
 
 int builtin_echo(char **args);
@@ -149,5 +156,13 @@ void free_redir(void *content);
 void free_command_data(void *content);
 void free_pars_data(t_pars_data *pars);
 t_pars_data *init_pars_data(char *line);
+
+//
+void init_signals(void);
+void cleanup_and_exit(int sig);
+void free_env_data(t_env_data *env);
+void cleanup_shell(void);
+int shell_loop(void);
+
 
 #endif

@@ -22,13 +22,10 @@ int handle_heredoc(char *delimiter)
         perror("pipe");
         return -1;
     }
-    printf("DEBUG: Here-doc démarré, délimiteur='%s'\n", delimiter);
     while ((line = readline("> ")) != NULL)
     {
-        printf("DEBUG: Lu ligne '%s'\n", line);
         if (strcmp(line, delimiter) == 0)
         {
-            printf("DEBUG: Délimiteur trouvé !\n");
             free(line);
             break;
         }
@@ -84,10 +81,7 @@ int open_infiles(t_list *redir_in)
         redir = (t_redir *)redir_in->content;
         
         if (redir->here_doc)
-        {
-            printf("DEBUG: Traitement here_doc '%s'\n", redir->file);
             tmp_fd = handle_heredoc(redir->file);
-        }
         else
             tmp_fd = open(redir->file, O_RDONLY);
         if (tmp_fd == -1)

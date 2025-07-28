@@ -1,42 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/05 15:14:32 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/28 15:01:55 by mpoirier         ###   ########.fr       */
+/*   Created: 2025/07/28 14:51:50 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/07/28 14:54:05 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "libft.h"
+#include <stdlib.h>
 
-/* ORIGINAL qui donnait des leaks
-char	*ft_strchr(const char *s, int c)
+char	*ft_strndup(const char *s, size_t n)
 {
-	while (*s)
-	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
-	}
-	if (c == '\0')
-		return ((char *)s);
-	return (NULL);
-}*/
+	char	*dup;
+	size_t	i;
+	size_t	len;
 
-char	*ft_strchr(const char *s, int c)
-{
 	if (!s)
 		return (NULL);
-	while (*s)
+	len = 0;
+	while (len < n && s[len])
+		len++;
+	dup = malloc(sizeof(char) * (len + 1));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < len)
 	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
+		dup[i] = s[i];
+		i++;
 	}
-	if ((char)c == '\0')
-		return ((char *)s);
-	return (NULL);
+	dup[i] = '\0';
+	return (dup);
 }

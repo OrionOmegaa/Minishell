@@ -38,11 +38,14 @@ void exit_with_error(const char *msg, int code)
     exit(code);
 }
 
-void free_env_data(t_env_data *env)
+void	free_env_data(t_env_data *env)
 {
+    int	i;
+
     if (!env)
-        return;
-    for (int i = 0; env[i].key != NULL; i++)
+        return ;
+    i = -1;
+    while (env[++i].key != NULL)
     {
         free(env[i].key);
         free(env[i].value);
@@ -112,6 +115,11 @@ int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
         while (exe->envp[i])
             free(exe->envp[i++]);
         free(exe->envp);
+    }
+    if (exe->env)
+    {
+        free(exe->env);  // ← Libère le tableau de pointeurs
+        exe->env = NULL;
     }
     if (err_msg)
         write(2, err_msg, strlen(err_msg));

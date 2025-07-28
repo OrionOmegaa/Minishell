@@ -68,6 +68,34 @@ int builtin_unset(char **args, t_exe_data *exe)
 
 int builtin_env(t_exe_data *exe)
 {
+    if (!exe || !exe->env)
+        return (1);
+    
+    int i = 0;
+    while (exe->env[i])  // ← Vérification du pointeur
+    {
+        if (!exe->env[i])  // ← Sécurité supplémentaire
+        {
+            printf("DEBUG: exe->env[%d] est NULL, arrêt\n", i);
+            break;
+        }
+        
+        if (!exe->env[i]->key || !exe->env[i]->value)  // ← Vérification clé/valeur
+        {
+            printf("DEBUG: exe->env[%d] key ou value NULL\n", i);
+            i++;
+            continue;
+        }
+        
+        ft_printf("%s=%s\n", exe->env[i]->key, exe->env[i]->value);
+        i++;
+    }
+    return 0;
+}
+
+/* ORIGINAL
+int builtin_env(t_exe_data *exe)
+{
     int i = 0;
     while (exe->env[i])
     {
@@ -75,8 +103,19 @@ int builtin_env(t_exe_data *exe)
         i++;
     }
     return 0;
+}*/
+
+int builtin_exit(char **args)
+{
+    g_shell.exit_status= 0;
+    if (args[1])
+        g_shell.exit_status = ft_atoi(args[1]);
+    g_shell.running = 0;
+    //cleanup_shell();
+    return (g_shell.exit_status);
 }
 
+/* Original BUILTIN_EXIT
 int builtin_exit(char **args)
 {
     int status = 0;
@@ -84,4 +123,4 @@ int builtin_exit(char **args)
     if (args[1])
         status = ft_atoi(args[1]);
     exit(status);
-}
+}*/

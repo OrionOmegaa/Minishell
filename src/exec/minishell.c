@@ -6,19 +6,24 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/18 15:16:39 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:50:38 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-    t_env_data *env;
-    if (ac != 1 && av)
-        return (ft_printf("Wrong Number Of Argument\nUse : ./Minishell\n"));
-    env = init_env(envp);
-    minishell(&env);
-    free_env_data(env);
-    return 0;
+	// t_env_data *original_env; // for debug
+	if (ac != 1 && av)
+		return (ft_printf("Wrong Number Of Argument\nUse : ./Minishell\n"));
+	g_shell.env = init_env(envp);
+	//original_env = g_shell.env;
+	if (!g_shell.env)
+		return (1);
+	g_shell.running = 1;
+	init_signals();
+	minishell(&g_shell.env);
+	cleanup_shell();
+	exit(g_shell.exit_status);
 }
