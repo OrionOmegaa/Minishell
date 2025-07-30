@@ -50,13 +50,17 @@ int builtin_cd(char **args, t_exe_data *exe)
 
 int builtin_echo(char **args)
 {
-    for (int i = 1; args[i]; i++)
+    int i = 0;
+    if (ft_strncmp(args[1], "-n", 3) == 0)
+        i++;
+    while (args[++i])
     {
         ft_printf("%s", args[i]);
         if (args[i + 1])
             ft_printf(" ");
     }
-    ft_printf("\n");
+    if (ft_strncmp(args[1], "-n", 3) != 0)
+        ft_printf("\n");
     return 0;
 }
 
@@ -76,7 +80,7 @@ int exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
         return builtin_unset(cmd->args, exe);
     else if (ft_strncmp(builtin, "env", 4) == 0)
         return builtin_env(exe);
-    else if (ft_strncmp(builtin, "exit", 4) == 0)
+    else if (ft_strncmp(builtin, "exit", 5) == 0)
         return builtin_exit(cmd->args);
     return -1;
 }

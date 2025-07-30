@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/28 15:12:40 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:19:47 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,8 @@ void cleanup_and_exit(int sig);
 void free_env_data(t_env_data *env);
 void cleanup_shell(void);
 int shell_loop(void);
-
+//
+int  env_len(t_env_data *env);
+int is_known(t_env_data **env, char *key);
 
 #endif

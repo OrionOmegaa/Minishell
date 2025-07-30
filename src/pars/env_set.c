@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/28 11:21:43 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/29 20:18:05 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
     }
 }*/
 
-static int is_known(t_env_data **env, char *key)
+int is_known(t_env_data **env, char *key)
 {
     int i;
 
@@ -41,7 +41,7 @@ static int is_known(t_env_data **env, char *key)
     return (-1);
 }
 
-static int  env_len(t_env_data *env)
+int  env_len(t_env_data *env)
 {
     int len;
     
@@ -51,7 +51,7 @@ static int  env_len(t_env_data *env)
     return (len);
 }
 
-void	env_set(t_env_data **env, char *key, char *value)
+/*void	env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
 	int	len;
@@ -64,7 +64,7 @@ void	env_set(t_env_data **env, char *key, char *value)
 		(*env)[0].key = NULL;
 		(*env)[0].value = NULL;
 	}
-	if (!key || !value)
+	if (!key)
 		return ;
 	i = is_known(env, key);
 	if (i != -1)
@@ -79,10 +79,13 @@ void	env_set(t_env_data **env, char *key, char *value)
 	if (!*env)
 		return ;
 	(*env)[len - 1].key = ft_strdup(key);
-	(*env)[len - 1].value = ft_strdup(value);
+	if (!value)
+		(*env)[len - 1].value = NULL;
+	else
+		(*env)[len - 1].value = ft_strdup(value);
 	(*env)[len].key = NULL;
 	(*env)[len].value = NULL;
-}
+}*/
 
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {

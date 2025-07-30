@@ -12,6 +12,62 @@
 
 #include "../../includes/minishell.h"
 
+/*int builtin_export(char **args, t_exe_data *exe)
+{
+    int i = 1;
+
+    // Si aucun argument, afficher toutes les variables exportées
+    if (!args[1])
+    {
+        int j = 0;
+        while (exe->env[j])
+        {
+            if (exe->env[j]->value)
+                ft_printf("declare -x %s=\"%s\"\n", exe->env[j]->key, exe->env[j]->value);
+            else
+                ft_printf("declare -x %s\n", exe->env[j]->key);
+            j++;
+        }
+        return 0;
+    }
+
+    // Traiter chaque argument
+    while (args[i])
+    {
+        char *equal_sign = ft_strchr(args[i], '=');
+        if (equal_sign)
+        {
+            // Variable avec valeur : VAR=value
+            size_t key_len = equal_sign - args[i];
+            char key[256];
+            char *value = equal_sign + 1;
+
+            // Vérifier que la clé n'est pas trop longue
+            if (key_len >= sizeof(key))
+            {
+                ft_printf("export: variable name too long\n");
+                i++;
+                continue;
+            }
+
+            // Copier la clé (méthode plus sûre)
+            ft_memcpy(key, args[i], key_len);
+            key[key_len] = '\0';
+
+            // Définir la variable d'environnement
+            env_set(exe->env, key, value);
+        }
+        else
+        {
+            // Variable sans valeur : VAR (juste exportée)
+            env_set(exe->env, args[i], NULL);
+        }
+        i++;
+    }
+    return 0;
+}*/
+
+/* ORIGINAL
 int builtin_export(char **args, t_exe_data *exe)
 {
     int i = 1;
@@ -49,8 +105,7 @@ int builtin_export(char **args, t_exe_data *exe)
         i++;
     }
     return 0;
-}
-
+}*/
 
 int builtin_unset(char **args, t_exe_data *exe)
 {
