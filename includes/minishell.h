@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/29 20:19:47 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/30 14:23:52 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ int         executor(t_env_data **env, t_pars_data *pars);
 void        free_cmd(t_cmd_data *cmd);
 //Built in
 
-int builtin_echo(char **args);
 int builtin_cd(char **args, t_exe_data *exe);
 int builtin_pwd(void);
 int builtin_export(char **args, t_exe_data *exe);
@@ -137,8 +136,8 @@ int builtin_exit(char **args);
 void    minishell(t_env_data **env);
 int     find_fd(char *file, int in_or_out);
 char    **extract_args(const char *raw_args);
-void    env_set(t_env_data **env, char *key, char *value);
-void    env_unset(t_env_data **env, char *key);
+t_env_data    **env_set(t_env_data **env, char *key, char *value);
+t_env_data    **env_unset(t_env_data **env, char *key);
 char    *find_path(const char *cmd);
 int	ft_isspace(char c);
 int	is_quote(char c);
@@ -162,9 +161,10 @@ void init_signals(void);
 void cleanup_and_exit(int sig);
 void free_env_data(t_env_data *env);
 void cleanup_shell(void);
-int shell_loop(void);
 //
 int  env_len(t_env_data *env);
 int is_known(t_env_data **env, char *key);
+//
+int is_env_builtin(const char *cmd);
 
 #endif

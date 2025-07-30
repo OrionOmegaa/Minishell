@@ -154,12 +154,18 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
     cmds = interpreter(cmd);
     if (!cmds)
         return ;
+    if (!cmds->next && cmds->args && is_env_builtin(cmds->args[0]))
+    {
+        exec_builtin(cmds, exe);
+        free_cmd_list(cmds);
+        return ;
+    }
     if (!cmds->next && cmds->args && strcmp(cmds->args[0], "exit") == 0)
     {
         builtin_exit(cmds->args);
         free_cmd_list(cmds);
         cleanup_shell();
-        exit(g_shell.exit_status); //  ← Modification
+        exit(g_shell.exit_status);
     }
     current = cmds;
     while (current)
@@ -204,18 +210,8 @@ int executor(t_env_data **env, t_pars_data *pars)
 
     exe = init_exe(env, pars);
     execute_pipeline(&exe, exe.pars);
+    *env = *(exe.env);
     free_exe(&exe, 0, 0, NULL);
     return (0);
 }
 
-/* ORIGINAL
-int    executor(t_env_data **env, t_pars_data *pars)
-{
-    t_exe_data    exe;
-
-    printf("DEBUG: executor appelé!\n");  // ← Debug au début
-    exe = init_exe(env, pars);
-    execute_pipeline(&exe, exe.pars);
-    free_exe(&exe, 0, 0, NULL);
-    return (0);
-}*/

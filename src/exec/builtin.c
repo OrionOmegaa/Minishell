@@ -51,7 +51,7 @@ int builtin_cd(char **args, t_exe_data *exe)
 int builtin_echo(char **args)
 {
     int i = 0;
-    if (ft_strncmp(args[1], "-n", 3) == 0)
+    if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
         i++;
     while (args[++i])
     {
@@ -59,7 +59,7 @@ int builtin_echo(char **args)
         if (args[i + 1])
             ft_printf(" ");
     }
-    if (ft_strncmp(args[1], "-n", 3) != 0)
+    if (!args[1] || (args[1] && ft_strncmp(args[1], "-n", 3) != 0))
         ft_printf("\n");
     return 0;
 }
@@ -83,6 +83,19 @@ int exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
     else if (ft_strncmp(builtin, "exit", 5) == 0)
         return builtin_exit(cmd->args);
     return -1;
+}
+
+int is_env_builtin(const char *cmd)
+{
+    if (!cmd)
+        return 0;
+    if (ft_strncmp(cmd, "cd", 3) == 0)
+        return 1;
+    if (ft_strncmp(cmd, "unset", 6) == 0)
+        return 1;
+    if (ft_strncmp(cmd, "export", 7) == 0)
+        return 1;
+    return 0;
 }
 
 int is_builtin(const char *cmd)

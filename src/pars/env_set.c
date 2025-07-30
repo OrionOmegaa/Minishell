@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/29 20:18:05 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/07/30 14:17:04 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int  env_len(t_env_data *env)
     return (len);
 }
 
-/*void	env_set(t_env_data **env, char *key, char *value)
+t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
 	int	len;
@@ -60,24 +60,24 @@ int  env_len(t_env_data *env)
 	{
 		*env = malloc(sizeof(t_env_data));
 		if (!*env)
-			return ;
+			return (NULL);
 		(*env)[0].key = NULL;
 		(*env)[0].value = NULL;
 	}
 	if (!key)
-		return ;
+		return (NULL);
 	i = is_known(env, key);
 	if (i != -1)
 	{
 		free((*env)[i].value);
 		(*env)[i].value = ft_strdup(value);
-		return ;
+		return (env);
 	}
 	len = env_len(*env) + 1;
 	*env = ft_realloc(*env, len * sizeof(t_env_data), 
 		(len + 1) * sizeof(t_env_data));
 	if (!*env)
-		return ;
+		return (NULL);
 	(*env)[len - 1].key = ft_strdup(key);
 	if (!value)
 		(*env)[len - 1].value = NULL;
@@ -85,7 +85,8 @@ int  env_len(t_env_data *env)
 		(*env)[len - 1].value = ft_strdup(value);
 	(*env)[len].key = NULL;
 	(*env)[len].value = NULL;
-}*/
+	return (env);
+}
 
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {
@@ -121,17 +122,18 @@ static t_env_data	*env_copy(t_env_data *env, char *key)
 	return (res);
 }
 
-void	env_unset(t_env_data **env, char *key)
+t_env_data	**env_unset(t_env_data **env, char *key)
 {
 	t_env_data	*res;
 
 	if (!env || !*env || !key)
-		return ;
+		return (NULL);
 	if (is_known(env, key) == -1)
-		return ;
+		return (NULL);
 	res = env_copy(*env, key);
 	if (!res)
-		return ;
+		return (NULL);
 	free(*env);
 	*env = res;
+	return (env);
 }
