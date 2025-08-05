@@ -89,18 +89,6 @@ int builtin_env(t_exe_data *exe)
     return 0;
 }
 
-/* ORIGINAL
-int builtin_env(t_exe_data *exe)
-{
-    int i = 0;
-    while (exe->env[i])
-    {
-        ft_printf("%s=%s\n", exe->env[i]->key, exe->env[i]->value);
-        i++;
-    }
-    return 0;
-}*/
-
 int builtin_exit(char **args)
 {
     g_shell.exit_status= 0;

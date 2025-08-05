@@ -14,11 +14,9 @@
 
 int	main(int ac, char **av, char **envp)
 {
-	// t_env_data *original_env; // for debug
 	if (ac != 1 && av)
 		return (ft_printf("Wrong Number Of Argument\nUse : ./Minishell\n"));
 	g_shell.env = init_env(envp);
-	//original_env = g_shell.env;
 	if (!g_shell.env)
 		return (1);
 	g_shell.running = 1;

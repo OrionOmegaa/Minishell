@@ -16,15 +16,12 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
 {
     t_exe_data exe;
     
-    // Compte les éléments
     int count = 0;
     while ((*env)[count].key != NULL)
         count++;
-    
-    // Crée un tableau de pointeurs
     exe.env = malloc((count + 1) * sizeof(t_env_data *));
     for (int i = 0; i < count; i++)
-        exe.env[i] = &((*env)[i]);  // ← Pointeur vers chaque structure
+        exe.env[i] = &((*env)[i]);
     exe.env[count] = NULL;
     
     exe.pars = pars;
@@ -32,18 +29,6 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     exe.cmds = NULL;
     return (exe);
 }
-
-/* ORIGINAL
-t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
-{
-    t_exe_data exe;
-
-    exe.pars = pars;
-    exe.env = env;
-    exe.prev_pipe = -1;
-    exe.cmds = NULL;
-    return (exe);
-}*/
 
 t_env_data *init_env(char **envp)
 {

@@ -87,52 +87,52 @@ t_command_data *pars_single_command(char *cmd_str)
     {
         if (current[i] == '<')
         {
-            if (current[i + 1] == '<')  // here_doc
+            if (current[i + 1] == '<')
             {
-                i++; // skip second '<'
+                i++;
                 while (current[i] && (current[i] == ' '))
                     i++;
                 token = get_next_token(&current[i], &i);
                 if (token)
                 {       
-                    add_redirection(&cmd->redir_in, token, 0, 1);  // here_doc
+                    add_redirection(&cmd->redir_in, token, 0, 1);
                     free(token);
                 }
             }
-            else  // redirection simple
+            else
             {
                 while (current[i] && (current[i] == ' ' || current[i] == '\t'))
                     i++;
                 token = get_next_token(&current[i], &i);
                 if (token)
                 {
-                    add_redirection(&cmd->redir_in, token, 0, 0);  // input normal
+                    add_redirection(&cmd->redir_in, token, 0, 0);
                     free(token);
                 }
             }
         }
         else if (current[i] == '>')
         {       
-            if (current[i + 1] == '>')  // append
+            if (current[i + 1] == '>')
             {
-                i++; // skip second '>'
+                i++;
                 while (current[i] && (current[i] == ' '))
                     i++;
                 token = get_next_token(&current[i], &i);
                 if (token)
                 {
-                    add_redirection(&cmd->redir_out, token, 1, 0);  // append
+                    add_redirection(&cmd->redir_out, token, 1, 0);
                     free(token);
                 }
             }
-            else  // overwrite
+            else
             {
                 while (current[i] && (current[i] == ' ' || current[i] == '\t'))
                     i++;
                 token = get_next_token(&current[i], &i);
                 if (token)
                 {
-                    add_redirection(&cmd->redir_out, token, 0, 0);  // overwrite
+                    add_redirection(&cmd->redir_out, token, 0, 0);
                     free(token);
                 }
             }
@@ -162,15 +162,13 @@ char *get_next_token(char *str, int *index)
         return NULL;
     int str_len = strlen(str);
     if (*index >= str_len) {
-        return NULL;  // Fin de chaîne atteinte
+        return NULL;
     }
-    // Ignorer les espaces
-    while (str[start] && (str[start] == ' ' || str[start] == '\t')) // ligne 142
+    while (str[start] && (str[start] == ' ' || str[start] == '\t'))
         start++;
     if (!str[start])
         return (NULL);
     *index = start;
-    // Compter la longueur du token
     while (str[*index] && ((!ft_isspace(str[*index]) && !is_redirect_char(str[*index])) || in_quotes))
     {
         if (is_quote(str[*index]) && !in_quotes)
@@ -206,8 +204,7 @@ char **split_by_pipes(char *line, int *cmd_count)
     int i = 0;
     bool in_quotes = false;
     char quote_char = 0;
-    
-    // Compter le nombre de pipes
+
     while (line[i])
     {
         if (is_quote(line[i]) && !in_quotes)
@@ -226,8 +223,6 @@ char **split_by_pipes(char *line, int *cmd_count)
     commands = malloc((count + 1) * sizeof(char *));
     if (!commands)
         return (NULL);
-    
-    // Séparer les commandes
     i = 0;
     int cmd_idx = 0;
     int start = 0;
@@ -247,7 +242,6 @@ char **split_by_pipes(char *line, int *cmd_count)
             commands[cmd_idx] = ft_substr(line, start, i - start);
             if (!commands[cmd_idx])
             {
-                // Libérer en cas d'erreur
                 while (cmd_idx > 0)
                     free(commands[--cmd_idx]);
                 free(commands);
@@ -258,8 +252,6 @@ char **split_by_pipes(char *line, int *cmd_count)
         }
         i++;
     }
-    
-    // Dernière commande
     commands[cmd_idx] = ft_substr(line, start, i - start + 1);
     if (!commands[cmd_idx])
     {

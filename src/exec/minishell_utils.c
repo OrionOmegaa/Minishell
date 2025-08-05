@@ -118,7 +118,7 @@ int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
     }
     if (exe->env)
     {
-        free(exe->env);  // ← Libère le tableau de pointeurs
+        free(exe->env);
         exe->env = NULL;
     }
     if (err_msg)

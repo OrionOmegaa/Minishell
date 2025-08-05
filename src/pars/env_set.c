@@ -12,22 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-/*void print_env(t_env_data *env)
-{
-    int i;
-
-    if (!env) {
-        printf("env = NULL\n");
-        return ;
-    }
-    i = 0;
-    while (env[i].key != NULL) {
-        // printf("ici\n");
-        printf("env[%d]: key = %s, value = %s\n", i, env[i].key, env[i].value);
-        i++;
-    }
-}*/
-
 int is_known(t_env_data **env, char *key)
 {
     int i;
