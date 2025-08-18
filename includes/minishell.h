@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/07/30 14:23:52 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/08/16 20:59:06 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,5 +166,10 @@ int  env_len(t_env_data *env);
 int is_known(t_env_data **env, char *key);
 //
 int is_env_builtin(const char *cmd);
-
+//
+void expand_args_array(char **args, t_env_data **env);
+char *expand_variables(char *input, t_env_data **env);
+int get_var_name_len(char *str);
+char *get_env_value(t_env_data **env, char *key);
+//
 #endif

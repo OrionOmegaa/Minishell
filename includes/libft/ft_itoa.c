@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdescamp <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 12:01:09 by hdescamp          #+#    #+#             */
-/*   Updated: 2024/11/12 11:36:53 by hdescamp         ###   ########.fr       */
+/*   Updated: 2025/08/18 10:45:54 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	base_ten(int nb)
 static char	*ft_limit(int n, char *str)
 {
 	if (n == 0)
-		str = ft_strdup("0\0");
+		str = ft_strdup("0");
 	if (n == -2147483648)
 		str = ft_strdup("-2147483648\0");
 	if (n == 2147483647)

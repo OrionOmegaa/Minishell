@@ -20,7 +20,7 @@ int	ft_isspace(char c)
 
 int	is_quote(char c)
 {
-	return (c == '"' || c == '\'');
+	return (c == '"' || c == 39);
 }
 
 static int pars_count_args(const char *str, int count)
@@ -72,14 +72,14 @@ static void	handle_quote_state(const char *s, bool *in_quotes, char *quote_char,
 	{
 		*in_quotes = true;
 		*quote_char = s[*i];
-        if (!ft_isspace(s[(*i) + 1]))
-            (*i)++;
+        /*if (!ft_isspace(s[(*i) + 1]))
+            (*i)++;*/
 	}
 	else if (s[*i]== *quote_char && *in_quotes)
     {
 		*in_quotes = false;
-        if (!ft_isspace(s[(*i) + 1]))
-            (*i)++;
+        /*if (!ft_isspace(s[(*i) + 1]))
+            (*i)++;*/
     }
 }
 
@@ -100,7 +100,7 @@ static char	*copy_arg_content(const char *start, int len)
 	while (i < len)
 	{
 		handle_quote_state(start, &in_quotes, &quote_char, &i);
-		if (!is_quote(start[i]) || in_quotes)
+		if (!is_quote(start[i]) || (in_quotes && start[i] != quote_char))
 			result[j++] = start[i];
 		i++;
 	}

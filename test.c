@@ -1,6 +1,12 @@
 #include <stdio.h>
 
+
 int main() {
+   printf("ascii: %d\n", '\'');
+   return 0; 
+}
+
+/*int main() {
     char buffer[1024];
     int count = 0;
     
@@ -14,4 +20,4 @@ int main() {
         printf("Reçu: %s", buffer);
     }
     return 0;
-}
+}*/

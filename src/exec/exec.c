@@ -64,6 +64,7 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
         if (!skip)
         {
             char **args = duplicate_args(cur->raw_args);
+            expand_args_array(args, &g_shell.env);
             char *path = find_path(args[0]);
             if (!path)
                 path = ft_strdup(args[0]);
@@ -105,13 +106,22 @@ static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
         close(fds[1]);
     if (is_builtin(cmd->args[0]))
     {
+        //printf("DEBUG: '%s' détecté comme builtin\n", cmd->args[0]);
         int status = exec_builtin(cmd, exe);
+        //printf("DEBUG: builtin '%s' retourne %d\n", cmd->args[0], status);
         exit(status);
     }
     else
     {
+        //printf("DEBUG: '%s' pas builtin, execve avec path='%s'\n", cmd->args[0], cmd->path);
         execve(cmd->path, cmd->args, exe->envp);
-        perror("execve");
+        if (errno == ENOENT)
+            printf("bash: %s: command not found\n", cmd->args[0]);
+        else if (errno == EACCES)
+            printf("bash: %s: Permission denide\n", cmd->args[0]);
+        else
+            perror("execve");
+        //printf("DEBUG: about to exit(127)\n");
         exit(127);
     }
 }
@@ -156,7 +166,10 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
         return ;
     if (!cmds->next && cmds->args && is_env_builtin(cmds->args[0]))
     {
+        int saved_status = g_shell.exit_status;
         exec_builtin(cmds, exe);
+        if (strcmp(cmds->args[0], "echo") == 0)
+            g_shell.exit_status = saved_status;
         free_cmd_list(cmds);
         return ;
     }
@@ -164,8 +177,10 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
     {
         builtin_exit(cmds->args);
         free_cmd_list(cmds);
-        cleanup_shell();
-        exit(g_shell.exit_status);
+        g_shell.running = 0;
+        return ;
+        //cleanup_shell();
+        //exit(g_shell.exit_status);
     }
     current = cmds;
     while (current)
@@ -195,12 +210,19 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
         current = current->next;
     }
     current = cmds;
+    int last_status = 0;
     while (current)
     {
         if (!current->skip_cmd)
-            waitpid(current->pid, NULL, 0);
+        {
+            int status;
+            waitpid(current->pid, &status, 0);
+            if (WIFEXITED(status))
+                last_status = WEXITSTATUS(status);
+        }
         current = current->next;
     }
+    g_shell.exit_status = last_status;
     free_cmd_list(cmds);
 }
 
