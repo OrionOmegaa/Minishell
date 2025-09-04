@@ -39,15 +39,19 @@ int handle_heredoc(char *delimiter)
 
 int open_outfiles(t_list *redir_out)
 {
+    //printf("DEBUG: open_outfiles appelé\n");
     int     fd = STDOUT_FILENO;
     int     tmp_fd;
     t_redir *redir;
 
-    if (!redir_out)
-        return STDOUT_FILENO;
+    if (!redir_out) {
+        //printf("DEBUG: Pas de redirection de sortie\n");
+        return (STDOUT_FILENO);
+    }
     while (redir_out)
     {
         redir = (t_redir *)redir_out->content;
+        //printf("DEBUG: redir_out - file='%s', append=%d\n", redir->file, redir->append);
         if (redir->append)
             tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
         else
@@ -62,6 +66,7 @@ int open_outfiles(t_list *redir_out)
         if (fd != STDOUT_FILENO)
             close(fd);
         fd = tmp_fd;
+        //printf("DEBUG: open('%s') retourne fd=%d\n", redir->file, fd);
         redir_out = redir_out->next;
     }
     return fd;
@@ -69,6 +74,7 @@ int open_outfiles(t_list *redir_out)
 
 int open_infiles(t_list *redir_in)
 {
+    //printf("DEBUG: open_infiles appelé\n");
     int fd = STDIN_FILENO;
     int tmp_fd;
     t_redir *redir;
@@ -79,11 +85,13 @@ int open_infiles(t_list *redir_in)
     while (redir_in)
     {
         redir = (t_redir *)redir_in->content;
-        
+        //printf("DEBUG: redir_in - file='%s', here_doc=%d\n", redir->file, redir->here_doc);
         if (redir->here_doc)
             tmp_fd = handle_heredoc(redir->file);
-        else
+        else {
             tmp_fd = open(redir->file, O_RDONLY);
+            //printf("DEBUG: open('%s') = %d\n", redir->file, fd);
+        }
         if (tmp_fd == -1)
         {
             perror(redir->file);

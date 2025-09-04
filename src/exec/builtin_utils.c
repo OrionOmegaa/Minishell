@@ -76,12 +76,12 @@ int builtin_env(t_exe_data *exe)
     {
         if (!exe->env[i]) 
         {
-            printf("DEBUG: exe->env[%d] est NULL, arrêt\n", i);
+            //printf("DEBUG: exe->env[%d] est NULL, arrêt\n", i);
             break;
         }
         if (!exe->env[i]->key || !exe->env[i]->value)
         {
-            printf("DEBUG: exe->env[%d] key ou value NULL\n", i++);
+            //printf("DEBUG: exe->env[%d] key ou value NULL\n", i++);
             continue;
         }
         ft_printf("%s=%s\n", exe->env[i]->key, exe->env[i]->value);

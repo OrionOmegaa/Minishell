@@ -40,7 +40,8 @@ char *expand_variables(char *input, t_env_data **env)
 {
     if (!input)
         return NULL;
-    char *res = malloc((ft_strlen(input) * 4 + 1) * sizeof(char));
+    size_t size = ft_strlen(input) * 4 + 1;
+    char *res = malloc(size * sizeof(char));
     if (!res)
         return (NULL);
     char *var;
@@ -96,7 +97,7 @@ char *expand_variables(char *input, t_env_data **env)
             res[j++] = input[i++];
     }
     res[j] = '\0';
-    return (ft_realloc(res, sizeof(res), j + 1));
+    return (ft_realloc(res, size, j + 1));
 }
 
 void expand_args_array(char **args, t_env_data **env)

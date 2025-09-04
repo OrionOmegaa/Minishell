@@ -16,18 +16,19 @@ static char **duplicate_args(char **original_args)
 {
     if (!original_args)
         return NULL;
-    
     int count = 0;
     while (original_args[count])
         count++;
-    
-    char **new_args = malloc((count + 1) * sizeof(char *));
+    /*printf("DEBUG DUPLICATE: %d args à dupliquer\n", count);
+    for (int k = 0; k < count; k++)
+        printf("DEBUG DUPLICATE IN: [%d] = '%s' (len=%zu)\n", k, original_args[k], strlen(original_args[k]));
+    */char **new_args = malloc((count + 1) * sizeof(char *));
     if (!new_args)
         return NULL;
-    
     for (int i = 0; i < count; i++)
     {
         new_args[i] = ft_strdup(original_args[i]);
+        //printf("DEBUG DUPLICATE OUT: [%d] = '%s' (len=%zu)\n", i, new_args[i] ? new_args[i] : "NULL", new_args[i] ? strlen(new_args[i]) : 0);
         if (!new_args[i])
         {
             for (int j = 0; j < i; j++)
@@ -36,7 +37,6 @@ static char **duplicate_args(char **original_args)
             return NULL;
         }
     }
-    
     new_args[count] = NULL;
     return new_args;
 }
@@ -49,18 +49,21 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
     {
         t_command_data *cur = (t_command_data *)lst->content;
         int skip = 0;
-        if (cur->redir_in)
+        /*if (cur->redir_in)
         {
             t_redir *redir = (t_redir *)cur->redir_in->content;
-            printf("DEBUG: redir_in détectée - file='%s', here_doc=%d\n", 
-                   redir->file, redir->here_doc);
-        }
+            //printf("DEBUG: redir_in détectée - file='%s', here_doc=%d\n", redir->file, redir->here_doc);
+        }*/
         int fd_in = open_infiles(cur->redir_in);
-        if (fd_in == -1)
-            skip = 1;
+        //printf("DEBUG: fd_in = %d\n", fd_in);
+        if (fd_in == -1) {
+            skip = 1; //printf("DEBUG: fd_in a échoué\n");
+        }
         int fd_out = open_outfiles(cur->redir_out);
-        if (fd_out == -1)
-            skip = 1;
+        //printf("DEBUG: fd_out = %d\n", fd_out);
+        if (fd_out == -1) {
+            skip = 1; //printf("DEBUG: fd_out a échoué\n");
+        }
         if (!skip)
         {
             char **args = duplicate_args(cur->raw_args);
@@ -118,7 +121,7 @@ static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
         if (errno == ENOENT)
             printf("bash: %s: command not found\n", cmd->args[0]);
         else if (errno == EACCES)
-            printf("bash: %s: Permission denide\n", cmd->args[0]);
+            printf("bash: %s: Permission denided\n", cmd->args[0]);
         else
             perror("execve");
         //printf("DEBUG: about to exit(127)\n");
