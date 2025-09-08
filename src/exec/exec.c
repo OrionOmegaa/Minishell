@@ -49,21 +49,12 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
     {
         t_command_data *cur = (t_command_data *)lst->content;
         int skip = 0;
-        /*if (cur->redir_in)
-        {
-            t_redir *redir = (t_redir *)cur->redir_in->content;
-            //printf("DEBUG: redir_in détectée - file='%s', here_doc=%d\n", redir->file, redir->here_doc);
-        }*/
         int fd_in = open_infiles(cur->redir_in);
-        //printf("DEBUG: fd_in = %d\n", fd_in);
-        if (fd_in == -1) {
-            skip = 1; //printf("DEBUG: fd_in a échoué\n");
-        }
+        if (fd_in == -1)
+            skip = 1;
         int fd_out = open_outfiles(cur->redir_out);
-        //printf("DEBUG: fd_out = %d\n", fd_out);
-        if (fd_out == -1) {
-            skip = 1; //printf("DEBUG: fd_out a échoué\n");
-        }
+        if (fd_out == -1)
+            skip = 1;
         if (!skip)
         {
             char **args = duplicate_args(cur->raw_args);
@@ -71,6 +62,7 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
             char *path = find_path(args[0]);
             if (!path)
                 path = ft_strdup(args[0]);
+            //printf("DEBUG FINAL FD: cmd='%s', final_fd_in=%d, final_fd_out=%d\n", args[0], fd_in, fd_out);
             t_cmd_data *node = cmd_new(args, path, fd_in, fd_out);
             cmd_add_back(&cmds, node);
         }
@@ -81,17 +73,7 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
 
 static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 {
-    if (cmd->fd_in != -1)
-    {
-        if (dup2(cmd->fd_in, STDIN_FILENO) == -1)
-            exit_with_error("dup2 fd_in", 1);
-    }
-    else if (exe->prev_pipe != -1)
-    {
-        if (dup2(exe->prev_pipe, STDIN_FILENO) == -1)
-            exit_with_error("dup2 pipe in", 1);
-    }
-    if (cmd->fd_out != -1)
+    if (cmd->fd_out != -1 && cmd->fd_out != STDOUT_FILENO)
     {
         if (dup2(cmd->fd_out, STDOUT_FILENO) == -1)
             exit_with_error("dup2 fd_out", 1);
@@ -100,6 +82,16 @@ static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
     {
         if (dup2(fds[1], STDOUT_FILENO) == -1)
             exit_with_error("dup2 pipe out", 1);
+    }
+    if (cmd->fd_in != -1 && cmd->fd_in != STDIN_FILENO)
+    {
+        if (dup2(cmd->fd_in, STDIN_FILENO) == -1)
+            exit_with_error("dup2 fd_in", 1);
+    }
+    else if (exe->prev_pipe != -1)
+    {
+        if (dup2(exe->prev_pipe, STDIN_FILENO) == -1)
+            exit_with_error("dup2 pipe in", 1);
     }
     if (exe->prev_pipe != -1)
         close(exe->prev_pipe);
@@ -182,8 +174,6 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
         free_cmd_list(cmds);
         g_shell.running = 0;
         return ;
-        //cleanup_shell();
-        //exit(g_shell.exit_status);
     }
     current = cmds;
     while (current)

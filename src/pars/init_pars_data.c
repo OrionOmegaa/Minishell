@@ -40,7 +40,10 @@ int check_syntax_errors(char *line)
     }
     if (trim[0] == '>' || trim[0] == '<')
     {
-        printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
+        if ((trim[0] == '>' && trim[1] == '>')|| (trim[0] == '<' && trim[1] == '<'))
+            printf("bash: syntax error near unexpected token `%c%c' \n", trim[0], trim[1]);
+        else
+            printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
         g_shell.exit_status = 2;
         free(trim);
         return (1);
@@ -53,7 +56,10 @@ int check_syntax_errors(char *line)
     }
     if (len > 0 && (trim[len-1] == '>' || trim[len-1] == '<'))
     {
-        printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
+        if ((trim[len-1] == '>' && trim[len-2] == '>')|| (trim[len-1] == '<' && trim[len-2] == '<'))
+            printf("bash: syntax error near unexpected token `%c%c' \n", trim[0], trim[1]);
+        else
+            printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
         g_shell.exit_status = 2;
         free(trim);
         return (1);

@@ -50,16 +50,16 @@ int builtin_cd(char **args, t_exe_data *exe)
 
 int builtin_echo(char **args)
 {
-    int i = 0;
-    if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
+    int i = 1;
+    while (args[i] && ft_strncmp(args[i], "-n", 2) == 0)
         i++;
-    while (args[++i])
+    while (args[i])
     {
-        ft_printf("%s", args[i]);
-        if (args[i + 1])
+        ft_printf("%s", args[i++]);
+        if (args[i])
             ft_printf(" ");
     }
-    if (!args[1] || (args[1] && ft_strncmp(args[1], "-n", 3) != 0))
+    if (!args[1] || (args[1] && ft_strncmp(args[1], "-n", 2) != 0))
         ft_printf("\n");
     return 0;
 }

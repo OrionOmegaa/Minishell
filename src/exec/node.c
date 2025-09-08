@@ -29,6 +29,18 @@ t_cmd_data *cmd_new(char **args, char *path, int fd_in, int fd_out)
     return (new);
 }
 
+int cmd_count(t_list *lst)
+{
+    int count = 0;
+    t_list *tmp = lst;
+    while (tmp)
+    {
+        count++;
+        tmp = tmp->next;
+    }
+    return (count);
+}
+
 void cmd_add_back(t_cmd_data **lst, t_cmd_data *new)
 {
     t_cmd_data *tmp;

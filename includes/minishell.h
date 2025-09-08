@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/08/16 20:59:06 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/04 18:22:56 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ typedef struct  s_shell
 extern t_shell g_shell;
 
 //Struct Exec
-
 typedef struct s_redir
 {
     char *file;
@@ -103,13 +102,11 @@ typedef struct s_exe_data
 
 
 //Utils
-
 void    exit_with_error(const char *msg, int code);
 int     count_args(char *input);
 int     free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg);
 
 //Exec
-
 t_exe_data  init_exe(t_env_data **env, t_pars_data *pars);
 void        ft_free_tab(char **tab);
 void        exec(char *cmd, char **env);
@@ -122,8 +119,8 @@ void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
 t_env_data  *init_env(char **env);
 int         executor(t_env_data **env, t_pars_data *pars);
 void        free_cmd(t_cmd_data *cmd);
-//Built in
 
+//Built in
 int builtin_cd(char **args, t_exe_data *exe);
 int builtin_pwd(void);
 int builtin_export(char **args, t_exe_data *exe);
@@ -132,7 +129,6 @@ int builtin_env(t_exe_data *exe);
 int builtin_exit(char **args);
 
 //Parse
-
 void    minishell(t_env_data **env);
 int     find_fd(char *file, int in_or_out);
 char    **extract_args(const char *raw_args);
@@ -172,4 +168,5 @@ char *expand_variables(char *input, t_env_data **env);
 int get_var_name_len(char *str);
 char *get_env_value(t_env_data **env, char *key);
 //
+int cmd_count(t_list *lst);
 #endif
