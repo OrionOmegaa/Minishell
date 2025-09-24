@@ -19,16 +19,12 @@ static char **duplicate_args(char **original_args)
     int count = 0;
     while (original_args[count])
         count++;
-    /*printf("DEBUG DUPLICATE: %d args à dupliquer\n", count);
-    for (int k = 0; k < count; k++)
-        printf("DEBUG DUPLICATE IN: [%d] = '%s' (len=%zu)\n", k, original_args[k], strlen(original_args[k]));
-    */char **new_args = malloc((count + 1) * sizeof(char *));
+    char **new_args = malloc((count + 1) * sizeof(char *));
     if (!new_args)
         return NULL;
     for (int i = 0; i < count; i++)
     {
         new_args[i] = ft_strdup(original_args[i]);
-        //printf("DEBUG DUPLICATE OUT: [%d] = '%s' (len=%zu)\n", i, new_args[i] ? new_args[i] : "NULL", new_args[i] ? strlen(new_args[i]) : 0);
         if (!new_args[i])
         {
             for (int j = 0; j < i; j++)
@@ -58,11 +54,10 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
         if (!skip)
         {
             char **args = duplicate_args(cur->raw_args);
-            expand_args_array(args, &g_shell.env);
+            expand_args_array(args, g_shell.env);
             char *path = find_path(args[0]);
             if (!path)
                 path = ft_strdup(args[0]);
-            //printf("DEBUG FINAL FD: cmd='%s', final_fd_in=%d, final_fd_out=%d\n", args[0], fd_in, fd_out);
             t_cmd_data *node = cmd_new(args, path, fd_in, fd_out);
             cmd_add_back(&cmds, node);
         }
@@ -101,22 +96,18 @@ static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
         close(fds[1]);
     if (is_builtin(cmd->args[0]))
     {
-        //printf("DEBUG: '%s' détecté comme builtin\n", cmd->args[0]);
         int status = exec_builtin(cmd, exe);
-        //printf("DEBUG: builtin '%s' retourne %d\n", cmd->args[0], status);
         exit(status);
     }
     else
     {
-        //printf("DEBUG: '%s' pas builtin, execve avec path='%s'\n", cmd->args[0], cmd->path);
         execve(cmd->path, cmd->args, exe->envp);
-        if (errno == ENOENT)
+        if (errno == ENOENT || (!cmd->next && cmd->args && strcmp(cmd->args[0], "Makefile") == 0))
             printf("bash: %s: command not found\n", cmd->args[0]);
         else if (errno == EACCES)
             printf("bash: %s: Permission denided\n", cmd->args[0]);
         else
             perror("execve");
-        //printf("DEBUG: about to exit(127)\n");
         exit(127);
     }
 }
@@ -172,6 +163,7 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
     {
         builtin_exit(cmds->args);
         free_cmd_list(cmds);
+        write(STDOUT_FILENO, "exit\n", 5);
         g_shell.running = 0;
         return ;
     }

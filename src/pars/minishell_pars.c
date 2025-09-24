@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/28 16:15:27 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/22 19:10:25 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,25 @@ void	minishell(t_env_data **env)
 
 	while (g_shell.running)
 	{
+        if (g_shell.signal_received != 0)
+        {
+            if (g_shell.signal_received == SIGINT)
+            {
+                g_shell.signal_received = 0;
+                continue;
+            }
+            else if (g_shell.signal_received == SIGTERM)
+            {
+                g_shell.running = 0;
+                break;
+            }
+            g_shell.signal_received = 0;
+        }
         pars = NULL;
 		line = readline("\001\033[1;36m\002Minishell> \001\033[0m\002");
 		if (!line)
 		{
+            write(STDOUT_FILENO, "exit\n", 5);
 			g_shell.running = 0;
 			break ;
 		}

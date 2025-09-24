@@ -12,6 +12,32 @@
 
 #include "../../includes/minishell.h"
 
+int is_space(char c)
+{
+    return (c == ' ' || c == '\t' || c == '\b' || c == '\0');
+}
+
+int is_syntax(char c)
+{
+    return (c == '|' || c == '<' || c == '>');
+}
+
+bool is_commands(char *line, int i)
+{
+    if (!line[i])
+        return (false);
+    else if (is_space(line[i]))
+    {
+        if (line[i+1] && !is_space(line[i+1]) && !is_syntax(line[i+1]))
+            return (true);
+        else
+            return (false);
+    }
+    else if (is_syntax(line[i]) && !is_commands(line, i + 1))
+        return (false);
+    return (true);
+}
+
 int check_syntax_errors(char *line)
 {
     char *trim;
@@ -29,7 +55,7 @@ int check_syntax_errors(char *line)
         free(trim);
         return (0);
     }
-    if (trim[0] == '|')
+    else if (trim[0] == '|')
     {
         if (trim[1] == '|')
             printf("bash: syntax error near unexpected token `||'\n");
@@ -37,6 +63,27 @@ int check_syntax_errors(char *line)
             printf("bash: syntax error near unexpected token `|'\n");
         free(trim);
         return (1);
+    }
+    else if (len > 0 && trim[len-1] == '|')
+    {
+        printf("bash: syntax error near unexpected token `newline'\n");
+        free(trim);
+        return (1);
+    }
+    i = -1;
+    while (trim[++i])
+    {
+        if (trim[i] == '|' && !is_commands(trim, i + 1))
+        {
+            if (trim[i+1] == '|' && !is_commands(trim, i + 2))
+                printf("bash: syntax error near unexpected token `||'\n");
+            else if (is_commands(trim, i + 2))
+                continue;
+            else
+                printf("bash: syntax error near unexpected token `|'\n");
+            free(trim);
+            return (1);
+        }
     }
     if (trim[0] == '>' || trim[0] == '<')
     {
@@ -48,13 +95,7 @@ int check_syntax_errors(char *line)
         free(trim);
         return (1);
     }
-    if (len > 0 && trim[len-1] == '|')
-    {
-        printf("bash: syntax error near unexpected token `newline'\n");
-        free(trim);
-        return (1);
-    }
-    if (len > 0 && (trim[len-1] == '>' || trim[len-1] == '<'))
+    else if (len > 0 && (trim[len-1] == '>' || trim[len-1] == '<'))
     {
         if ((trim[len-1] == '>' && trim[len-2] == '>')|| (trim[len-1] == '<' && trim[len-2] == '<'))
             printf("bash: syntax error near unexpected token `%c%c' \n", trim[0], trim[1]);
@@ -63,15 +104,6 @@ int check_syntax_errors(char *line)
         g_shell.exit_status = 2;
         free(trim);
         return (1);
-    }
-    i = -1;
-    while (trim[++i])
-    {
-        if (trim[i] == '|' && line[i+1] == '|')
-        {
-            printf("bash: syntax error near unexpected token `||'\n");
-            return (1);
-        }
     }
     free(trim);
     return (0);
@@ -144,7 +176,6 @@ t_command_data *pars_single_command(char *cmd_str)
     cmd = new_command_data();
     if (!cmd)
         return (NULL);
-    ////printf("DEBUG: pars_single_command reçoit '%s' (longueur=%zu)\n", cmd_str, strlen(cmd_str));
     clean_cmd = malloc((ft_strlen(cmd_str) + 1) * sizeof(char));
     if (!clean_cmd)
     {
@@ -163,8 +194,7 @@ t_command_data *pars_single_command(char *cmd_str)
                 i += 2;
                 while (current[i] && (current[i] == ' '))
                     i++;
-                ////printf("DEBUG: Après skip espaces, i=%d, char='%c'\n", i, current[i]);
-                if (current[i])  // Si il y a quelque chose
+                if (current[i])
                 {
                     int start = i;
                     int len = 0;
@@ -173,33 +203,24 @@ t_command_data *pars_single_command(char *cmd_str)
                         len++;
                         i++;
                     }
-                    //printf("DEBUG: start=%d, len=%d\n", start, len);
                     if (len > 0)
                     {
                         token = malloc(len + 1);
                         if (token)
                         {
                             ft_strlcpy(token, &current[start], len + 1);
-                            //printf("DEBUG: token extrait = '%s'\n", token);
-                            //printf("DEBUG: Avant add_redirection\n");
-                            //int result = 
                             add_redirection(&cmd->redir_in, token, 0, 1);
-                            //printf("DEBUG: add_redirection retourne %d\n", result);
                             free(token);
                         }
                     }
-                    //else
-                        //printf("DEBUG: Aucun token trouvé\n");
                 }
             }
             else
             {
-                //printf("DEBUG: Branche < simple détectée\n");
                 i++;
                 while (current[i] && (current[i] == ' ' || current[i] == '\t'))
                     i++;
-                //printf("DEBUG: Après skip espaces, i=%d, char='%c'\n", i, current[i]);
-                if (current[i])  // Si il y a quelque chose
+                if (current[i])
                 {
                     int start = i;
                     int len = 0;
@@ -208,38 +229,27 @@ t_command_data *pars_single_command(char *cmd_str)
                         len++;
                         i++;
                     }
-                    //printf("DEBUG: start=%d, len=%d\n", start, len);
                     if (len > 0)
                     {
                         token = malloc(len + 1);
                         if (token)
                         {
                             ft_strlcpy(token, &current[start], len + 1);
-                            //printf("DEBUG: token < extrait = '%s'\n", token);
-                            //printf("DEBUG: Avant add_redirection\n");
-                            //int result = 
                             add_redirection(&cmd->redir_in, token, 0, 0);
-                            //printf("DEBUG: add_redirection retourne %d\n", result);
                             free(token);
                         }
                     }
-                    //else
-                        //printf("DEBUG: Aucun token trouvé\n");
                 }
             }
         }
         else if (current[i] == '>')
         {
-            //printf("DEBUG: '>' détecté à position %d\n", i);
-            //printf("DEBUG: Caractère suivant (i+1=%d) = '%c' (ASCII=%d)\n", i+1, current[i + 1], (int)current[i + 1]);
             if (current[i + 1] == '>')
             {
-                //printf("DEBUG: Branche >> détectée\n");
                 i+= 2;
                 while (current[i] && (current[i] == ' '))
                     i++;
-                //printf("DEBUG: Après skip espaces, i=%d, char='%c'\n", i, current[i]);
-                if (current[i])  // Si il y a quelque chose
+                if (current[i])
                 {
                     int start = i;
                     int len = 0;
@@ -248,33 +258,24 @@ t_command_data *pars_single_command(char *cmd_str)
                         len++;
                         i++;
                     }
-                    //printf("DEBUG: start=%d, len=%d\n", start, len);
                     if (len > 0)
                     {
                         token = malloc(len + 1);
                         if (token)
                         {
                             ft_strlcpy(token, &current[start], len + 1);
-                            //printf("DEBUG: token >> extrait = '%s' (start=%d, len=%d)\n", token, start, len);
-                            //printf("DEBUG: Avant add_redirection\n");
-                            //int result = 
                             add_redirection(&cmd->redir_out, token, 1, 0);
-                            //printf("DEBUG: add_redirection retourne %d\n", result);
                             free(token);
                         }
                     }
-                    //else
-                        //printf("DEBUG: Aucun token trouvé\n");
                 }
             }
             else
             {
-                //printf("DEBUG: Branche > simple détectée\n");
                 i++;
                 while (current[i] && (current[i] == ' ' || current[i] == '\t'))
                     i++;
-                //printf("DEBUG: Après skip espaces, i=%d, char='%c'\n", i, current[i]);
-                if (current[i])  // Si il y a quelque chose
+                if (current[i])
                 {
                     int start = i;
                     int len = 0;
@@ -283,23 +284,16 @@ t_command_data *pars_single_command(char *cmd_str)
                         len++;
                         i++;
                     }
-                    //printf("DEBUG: start=%d, len=%d\n", start, len);
                     if (len > 0)
                     {
                         token = malloc(len + 1);
                         if (token)
                         {
                             ft_strlcpy(token, &current[start], len + 1);
-                            //printf("DEBUG: token > extrait = '%s' (start=%d, len=%d)\n", token, start, len);
-                            //printf("DEBUG: Avant add_redirection\n");
-                            //int result = 
                             add_redirection(&cmd->redir_out, token, 0, 0);
-                            //printf("DEBUG: add_redirection retourne %d\n", result);
                             free(token);
                         }
                     }
-                    //else
-                        //printf("DEBUG: Aucun token trouvé\n");
                 }
             }
         }
@@ -307,30 +301,20 @@ t_command_data *pars_single_command(char *cmd_str)
             clean_cmd[j++] = current[i++];
     }
     clean_cmd[j] = '\0';
-    //printf("DEBUG: clean_cmd = '%s' (len=%zu)\n", clean_cmd, strlen(clean_cmd));
-    /*if (strstr(cmd_str, "cat "))
-    {
-        printf("DEBUG CAT: cmd_str original = '%s'\n", cmd_str);
-        printf("DEBUG CAT: clean_cmd = '%s' (len=%zu)\n", clean_cmd, ft_strlen(clean_cmd));
-    }*/
     cmd->raw_args = extract_args(clean_cmd);
     free(clean_cmd);
     if (!cmd->raw_args)
     {
         int i = -1;
         while (cmd->raw_args[++i])
-            //printf("DEBUG: raw_args[%d] = '%s' (len=%zu)\n", i, cmd->raw_args[i], strlen(cmd->raw_args[i]));
         free_command_data(cmd);
         return (NULL);
     }
-    else
-        //printf("DEBUG: raw_args est NULL!\n");
     return (cmd);
 }
 
 char *get_next_token(char *str, int *index)
 {
-    //printf("DEBUG: get_next_token appelé avec str='%s', index=%d\n", str + *index, *index);
     int start = *index;
     int len = 0;
     char *token;
@@ -340,22 +324,15 @@ char *get_next_token(char *str, int *index)
     if (!str || !index || *index < 0)
         return NULL;
     int str_len = strlen(str);
-    if (*index >= str_len) {
-        //printf("DEBUG: index >= str_len (%d >= %d)\n", *index, str_len);
+    if (*index >= str_len)
         return NULL;
-    }
-     //printf("DEBUG: get_next_token index=%d, str_len=%d, char='%c'\n", *index, str_len, str[*index]);
     while (str[start] && (str[start] == ' ' || str[start] == '\t'))
         start++;
-    if (!str[start]) {
-        //printf("DEBUG: str[start] est vide\n");
+    if (!str[start])
         return (NULL);
-    }
     *index = start;
-    //printf("DEBUG: start=%d, char='%c'\n", start, str[start]);
     while (str[*index] && ((!ft_isspace(str[*index]) && !is_redirect_char(str[*index])) || in_quotes))
     {
-        //printf("DEBUG: Analyse char[%d]='%c', is_space=%d, is_redirect=%d\n", *index, str[*index], ft_isspace(str[*index]), is_redirect_char(str[*index]));
         if (is_quote(str[*index]) && !in_quotes)
         {
             in_quotes = true;
@@ -366,19 +343,16 @@ char *get_next_token(char *str, int *index)
         (*index)++;
         len++;
     }
-    //printf("DEBUG: len final = %d\n", len);
-    if (len == 0) {
-        //printf("DEBUG: len=0, retourne NULL\n");
+    if (len == 0)
         return (NULL);
-    }
     token = malloc(len + 1);
     if (!token)
         return (NULL);
     
     ft_strlcpy(token, &str[start], len + 1);
-    //printf("DEBUG: token créé = '%s'\n", token);
     return (token);
 }
+
 int is_redirect_char(char c)
 {
     return (c == '<' || c == '>');
@@ -440,7 +414,6 @@ char **split_by_pipes(char *line, int *cmd_count)
         i++;
     }
     commands[cmd_idx] = ft_substr(line, start, i - start + 1);
-    //printf("DEBUG: ft_substr(start=%d, len=%d) = '%s' (taille réelle=%zu)\n", start, i - start, commands[cmd_idx], strlen(commands[cmd_idx]));
     if (!commands[cmd_idx])
     {
         while (cmd_idx > 0)

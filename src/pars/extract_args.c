@@ -140,47 +140,27 @@ static char **free_args_on_error(char **args, int count)
 
 char **extract_args(const char *raw_args)
 {
-    //printf("DEBUG: extract_args appelé avec '%s'\n", raw_args);
     char **args;
     const char *current;
     int argc;
     int i;
 
-    if (!raw_args){
-        //printf("DEBUG: raw_args est NULL\n");
+    if (!raw_args)
         return (NULL);
-    }
-    /*if (raw_args && strstr(raw_args, "cat"))
-        printf("DEBUG CAT EXTRACT: raw_args = '%s' (len=%zu)\n", raw_args, strlen(raw_args));
-    */argc = pars_count_args(raw_args, 0);
-    //printf("DEBUG: pars_count_args retourne %d\n", argc);
-    if (argc == 0) {
-        //printf("DEBUG: argc == 0, retourne NULL\n");
+    argc = pars_count_args(raw_args, 0);
+    if (argc == 0)
         return (NULL);
-    }
     args = malloc((argc + 1) * sizeof(char *));
-    if (!args) {
-        //printf("DEBUG: malloc échoue\n");
+    if (!args)
         return (NULL);
-    }
     current = raw_args;
     i = -1;
     while ((++i) < argc)
     {
-        //printf("DEBUG: extraction arg %d\n", i);
         args[i] = extract_one_arg(&current);
-        //printf("DEBUG: args[%d] = '%s'\n", i, args[i] ? args[i] : "NULL");
-        if (!args[i]) {
-            //printf("DEBUG: extract_one_arg échoue à l'index %d\n", i);
+        if (!args[i])
             return (free_args_on_error(args, i));
-        }
     }
-    
     args[i] = NULL;
-    /*printf("DEBUG EXTRACT RESULT: %d arguments extraits:\n", i);
-    int k = -1;
-    while ((++k) < i)
-        printf("DEBUG:   args[%d] = '%s' (len=%zu)\n", k, args[k], strlen(args[k]));
-    */
     return (args);
 }

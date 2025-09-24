@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/09/04 18:22:56 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:23:01 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,10 @@ typedef struct s_env_data
 
 typedef struct  s_shell
 {
-    t_env_data  *env;
+    t_env_data  **env;
     int         running;
     int         exit_status;
+    volatile sig_atomic_t signal_received;
 }               t_shell;
 
 extern t_shell g_shell;
@@ -116,7 +117,7 @@ int         is_builtin(const char *cmd);
 int         exec_builtin(t_cmd_data *cmd, t_exe_data *exe);
 t_cmd_data  *cmd_new(char **args, char *path, int fd_in, int fd_out);
 void        cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
-t_env_data  *init_env(char **env);
+t_env_data  **init_env(char **env);
 int         executor(t_env_data **env, t_pars_data *pars);
 void        free_cmd(t_cmd_data *cmd);
 
@@ -154,7 +155,8 @@ t_pars_data *init_pars_data(char *line);
 
 //
 void init_signals(void);
-void cleanup_and_exit(int sig);
+void handle_signal(int sig);
+//void cleanup_and_exit(int sig);
 void free_env_data(t_env_data *env);
 void cleanup_shell(void);
 //

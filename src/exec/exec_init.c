@@ -17,11 +17,11 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     t_exe_data exe;
     
     int count = 0;
-    while ((*env)[count].key != NULL)
+    while (env[count] != NULL)
         count++;
     exe.env = malloc((count + 1) * sizeof(t_env_data *));
     for (int i = 0; i < count; i++)
-        exe.env[i] = &((*env)[i]);
+        exe.env[i] = env[i];
     exe.env[count] = NULL;
     
     exe.pars = pars;
@@ -30,21 +30,34 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     return (exe);
 }
 
-t_env_data *init_env(char **envp)
+t_env_data **init_env(char **envp)
 {
-    t_env_data *env = NULL;
-    for (int i = 0; envp[i]; i++)
+    int count = 0;
+    while (envp[count])
+        count++;
+    t_env_data **env = malloc((count + 1) * sizeof(t_env_data *));
+    if (!env)
+        return NULL;
+    int i = -1;
+    while (++i < count)
     {
+        env[i] = malloc(sizeof(t_env_data));
+        if (!env[i])
+        {
+            while (i > 0)
+                free(env[--i]);
+            free(env);
+            return NULL;
+        }
         char *equal = ft_strchr(envp[i], '=');
         if (equal)
         {
-            size_t key_len = equal - envp[i];
-            char *key = ft_strndup(envp[i], key_len);
-            char *value = ft_strdup(equal + 1);
-            env_set(&env, key, value);
-            free(key);
-            free(value);
+            *equal = '\0';
+            env[i]->key = ft_strdup(envp[i]);
+            env[i]->value = ft_strdup(equal + 1);
+            *equal = '=';
         }
     }
+    env[count] = NULL;
     return (env);
 }
