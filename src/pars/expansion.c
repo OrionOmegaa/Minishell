@@ -14,23 +14,18 @@
 
 char *get_env_value(t_env_data **env, char *key)
 {
-    int i = -1;
-    if (!env || !key)
-        return NULL;
-    while (env[++i])
+    int i;
+
+    if (!env || !*env || !key)
+        return (NULL);
+    i = -1;
+    while ((*env)[++i].key != NULL)
     {
-        if (env[i] == NULL)
-            break;
-        if (env[i]->key == NULL)
-        {
-            i++;
-            continue;
-        }
-        
-        if (ft_strncmp(env[i]->key, key, ft_strlen(key)) == 0)
-            return (env[i]->value);
+        if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) == 0
+            && ft_strlen((*env)[i].key) == ft_strlen(key))
+            return ((*env)[i].value);
     }
-    return NULL;
+    return (NULL);
 }
 
 int get_var_name_len(char *str)
@@ -83,10 +78,28 @@ char *expand_variables(char *input, t_env_data **env)
             if (len > 0)
             {
                 char var_name[256];
-                ft_strlcpy(var_name, input + i, len + 1);
+                if ((size_t)len >= sizeof(var_name))
+                    len = (int)sizeof(var_name) - 1;
+                // Copy exactly len chars and NUL-terminate
+                ft_memcpy(var_name, input + i, (size_t)len);
+                var_name[len] = '\0';
                 var = get_env_value(env, var_name);
                 if (var)
-                    j += ft_strlcpy(res + j, var, ft_strlen(var));
+                {
+                    size_t vlen = ft_strlen(var);
+                    if (j + vlen + 1 > size)
+                    {
+                        size_t new_size = (j + vlen + 1) * 2;
+                        char *tmp = ft_realloc(res, size, new_size);
+                        if (!tmp)
+                            return (res); // return what we have
+                        res = tmp;
+                        size = new_size;
+                    }
+                    // Copy the full value, including all chars
+                    ft_memcpy(res + j, var, vlen);
+                    j += vlen;
+                }
                 i += len;
             }
             else
@@ -106,7 +119,7 @@ char *expand_variables(char *input, t_env_data **env)
 
 void expand_args_array(char **args, t_env_data **env)
 {
-    if (!args || !env)
+    if (!args || !env || !*env)
         return;
     int i = -1;
     while (args[++i])

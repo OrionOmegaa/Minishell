@@ -18,12 +18,12 @@ int builtin_export(char **args, t_exe_data *exe)
     if (!args[1])
     {
         int j = -1;
-        while (exe->env[++j])
+        while ((*exe->env)[++j].key != NULL)
         {
-            if (exe->env[j]->value)
-                ft_printf("declare -x %s=\"%s\"\n", exe->env[j]->key, exe->env[j]->value);
+            if ((*exe->env)[j].value)
+                ft_printf("declare -x %s=\"%s\"\n", (*exe->env)[j].key, (*exe->env)[j].value);
             else
-                ft_printf("declare -x %s\n", exe->env[j]->key);
+                ft_printf("declare -x %s\n", (*exe->env)[j].key);
         }
         return 0;
     }
@@ -38,12 +38,11 @@ int builtin_export(char **args, t_exe_data *exe)
             if (key_len >= sizeof(key))
             {
                 ft_printf("export: variable name too long\n");
-                i++;
                 continue;
             }
             ft_memcpy(key, args[i], key_len);
             key[key_len] = '\0';
-            exe->env = env_set((exe->env), key, value);
+            env_set(exe->env, key, value);
         }
         else
             env_set(exe->env, args[i], NULL);
@@ -70,16 +69,11 @@ int builtin_env(t_exe_data *exe)
     int i;
 
     i = -1;
-    if (!exe || !exe->env)
+    if (!exe || !exe->env || !*exe->env)
         return (1);
-    while (exe->env[++i])
-    {
-        if (!exe->env[i]) 
-            break;
-        else if (!exe->env[i]->key || !exe->env[i]->value)
-            continue;
-        ft_printf("%s=%s\n", exe->env[i]->key, exe->env[i]->value);
-    }
+    while ((*exe->env)[++i].key != NULL)
+        if ((*exe->env)[i].value)
+            ft_printf("%s=%s\n", (*exe->env)[i].key, (*exe->env)[i].value);
     return 0;
 }
 

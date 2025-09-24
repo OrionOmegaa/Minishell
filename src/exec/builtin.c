@@ -34,7 +34,7 @@ int builtin_cd(char **args, t_exe_data *exe)
         path = args[1];
     if (!path)
     {
-        ft_printf("cd: HOME not set\n", stderr);
+        ft_putendl_fd("cd: HOME not set", 2);
         return 1;
     }
     if (chdir(path) != 0)
@@ -51,25 +51,26 @@ int builtin_cd(char **args, t_exe_data *exe)
 int builtin_echo(char **args)
 {
     int i = 1;
-    while (args[i])
+    int no_newline = 0;
+
+    while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
     {
-        if (ft_strncmp(args[i], "-n", 2) == 0)
-        {
-            int j = 2;
-            while (args[i][j] && args[i][j] == 'n')
-                j++;
-            if (args[i][j] && (args[i][j] != '\0' || args[i][j] != 'n'))
-                break;
-            i++;
-        }
+        int j = 1;
+        while (args[i][j] == 'n')
+            j++;
+        if (args[i][j] != '\0')
+            break;
+        no_newline = 1;
+        i++;
     }
     while (args[i])
     {
-        ft_printf("%s", args[i++]);
-        if (args[i])
+        ft_printf("%s", args[i]);
+        if (args[i + 1])
             ft_printf(" ");
+        i++;
     }
-    if (!args[1] || (args[1] && ft_strncmp(args[1], "-n", 2) != 0))
+    if (!no_newline)
         ft_printf("\n");
     return 0;
 }

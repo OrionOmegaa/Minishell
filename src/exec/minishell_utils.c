@@ -116,11 +116,7 @@ int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
             free(exe->envp[i++]);
         free(exe->envp);
     }
-    if (exe->env)
-    {
-        free(exe->env);
-        exe->env = NULL;
-    }
+    // exe->env is a handle allocated in init_env; do not free here (cleanup_shell owns it)
     if (err_msg)
         write(2, err_msg, strlen(err_msg));
     return ret_val;

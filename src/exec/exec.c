@@ -217,7 +217,7 @@ int executor(t_env_data **env, t_pars_data *pars)
 
     exe = init_exe(env, pars);
     execute_pipeline(&exe, exe.pars);
-    *env = *(exe.env);
+    // env handle remains owned by the caller/global; nothing to reassign
     free_exe(&exe, 0, 0, NULL);
     return (0);
 }
