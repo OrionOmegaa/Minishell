@@ -66,7 +66,7 @@ static t_cmd_data *interpreter(t_pars_data *cmd)
     return (cmds);
 }
 
-static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
+static void child_exit_error(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 {
     if (cmd->fd_out != -1 && cmd->fd_out != STDOUT_FILENO)
     {
@@ -88,6 +88,11 @@ static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
         if (dup2(exe->prev_pipe, STDIN_FILENO) == -1)
             exit_with_error("dup2 pipe in", 1);
     }
+}
+
+static void child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
+{
+    child_exit_error(exe, cmd, fds);
     if (exe->prev_pipe != -1)
         close(exe->prev_pipe);
     if (fds[0] != -1)

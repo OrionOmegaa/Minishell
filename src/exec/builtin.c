@@ -51,7 +51,7 @@ int builtin_cd(char **args, t_exe_data *exe)
 int builtin_echo(char **args)
 {
     int i = 1;
-    int no_newline = 0;
+    bool no_newline = false;
 
     while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
     {
@@ -60,7 +60,7 @@ int builtin_echo(char **args)
             j++;
         if (args[i][j] != '\0')
             break;
-        no_newline = 1;
+        no_newline = true;
         i++;
     }
     while (args[i])

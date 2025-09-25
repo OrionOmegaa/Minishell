@@ -12,6 +12,32 @@
 
 #include "../../includes/minishell.h"
 
+static void export_second(char *arg, t_exe_data *exe)
+{
+    char    *equal_sign;
+    char    *value;
+    char    key[256];
+    size_t  key_len;
+
+    equal_sign = ft_strchr(arg, '=');
+    if (equal_sign)
+    {
+        key_len = equal_sign - arg;
+        value = equal_sign + 1;
+        if (key_len >= sizeof(key))
+        {
+            ft_printf("export: variable name too long\n");
+            return ;
+        }
+        ft_memcpy(key, arg, key_len);
+        key[key_len] = '\0';
+        exe->env = env_set((exe->env), key, value);
+    }
+    else
+        env_set(exe->env, arg, NULL);
+    return ;
+} 
+
 int builtin_export(char **args, t_exe_data *exe)
 {
     int i = 0;
@@ -28,26 +54,8 @@ int builtin_export(char **args, t_exe_data *exe)
         return 0;
     }
     while (args[++i])
-    {
-        char *equal_sign = ft_strchr(args[i], '=');
-        if (equal_sign)
-        {
-            size_t key_len = equal_sign - args[i];
-            char key[256];
-            char *value = equal_sign + 1;
-            if (key_len >= sizeof(key))
-            {
-                ft_printf("export: variable name too long\n");
-                continue;
-            }
-            ft_memcpy(key, args[i], key_len);
-            key[key_len] = '\0';
-            env_set(exe->env, key, value);
-        }
-        else
-            env_set(exe->env, args[i], NULL);
-    }
-    return 0;
+        export_second(args[i], exe);
+    return (0);
 }
 
 int builtin_unset(char **args, t_exe_data *exe)
