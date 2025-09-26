@@ -78,7 +78,7 @@ static void	expand_var(struct s_expand_ctx *c)
 		return ;
 	}
 	if ((size_t)len >= sizeof(name))
-		len = (int)sizeof(name) - 1;
+		len = (int) sizeof(name) - 1;
 	ft_memcpy(name, c->input + c->i, (size_t)len);
 	name[len] = '\0';
 	val = get_env_value(c->env, name);

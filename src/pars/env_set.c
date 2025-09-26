@@ -12,30 +12,44 @@
 
 #include "../../includes/minishell.h"
 
-int is_known(t_env_data **env, char *key)
+int	is_known(t_env_data **env, char *key)
 {
-    int i;
+	int	i;
 
-    i = -1;
-    while ((*env)[++i].key != NULL)
-    {
-        if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) == 0 && ft_strlen((*env)[i].key) == ft_strlen(key))
-            return (i);
-    }
-    return (-1);
+	i = -1;
+	while ((*env)[++i].key != NULL)
+	{
+		if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) == 0
+			&& ft_strlen((*env)[i].key) == ft_strlen(key))
+			return (i);
+	}
+	return (-1);
 }
 
-int  env_len(t_env_data *env)
+int	env_len(t_env_data *env)
 {
-    int len;
-    
-    len = 0;
-    while (env[len].key != NULL)
-        len++;
-    return (len);
+	int	len;
+
+	len = 0;
+	while (env[len].key != NULL)
+		len++;
+	return (len);
 }
 
-//Norme à faire
+void	realloc_env(t_env_data **env, int len, char *key, char *value)
+{
+	*env = ft_realloc(*env, len * sizeof(t_env_data), (len + 1)
+			* sizeof(t_env_data));
+	if (!*env)
+		return ;
+	(*env)[len - 1].key = ft_strdup(key);
+	if (!value)
+		(*env)[len - 1].value = NULL;
+	else
+		(*env)[len - 1].value = ft_strdup(value);
+}
+
+// A tester, j'ai aussi changer des trucs je suis pas certain. Leo :D
 t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
@@ -43,11 +57,9 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 
 	if (!*env)
 	{
-		*env = malloc(sizeof(t_env_data));
+		*env = ft_calloc(1, sizeof(t_env_data));
 		if (!*env)
 			return (NULL);
-		(*env)[0].key = NULL;
-		(*env)[0].value = NULL;
 	}
 	if (!key)
 		return (NULL);
@@ -58,53 +70,37 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 		(*env)[i].value = ft_strdup(value);
 		return (env);
 	}
-	len = env_len(*env) + 1;
-	*env = ft_realloc(*env, len * sizeof(t_env_data), 
-		(len + 1) * sizeof(t_env_data));
-	if (!*env)
-		return (NULL);
-	(*env)[len - 1].key = ft_strdup(key);
-	if (!value)
-		(*env)[len - 1].value = NULL;
-	else
-		(*env)[len - 1].value = ft_strdup(value);
-	(*env)[len].key = NULL;
-	(*env)[len].value = NULL;
+	len = env_len(*env);
+	realloc_env(env, len, key, value);
 	return (env);
 }
 
-//Norme à faire
+// Norme à faire
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {
 	t_env_data	*res;
 	int			i;
 	int			j;
-	int			size;
 
-	size = env_len(env);
-	res = malloc(sizeof(t_env_data) * size);
+	res = malloc(sizeof(t_env_data) * (env_len(env)));
 	if (!res)
 		return (NULL);
-	i = 0;
+	i = -1;
 	j = 0;
-	while (env[i].key != NULL)
+	while (env[++i].key != NULL)
 	{
-		if (ft_strncmp(env[i].key, key, ft_strlen(key)) != 0 
+		if (ft_strncmp(env[i].key, key, ft_strlen(key)) != 0
 			|| ft_strlen(env[i].key) != ft_strlen(key))
 		{
 			res[j].key = env[i].key;
-			res[j].value = env[i].value;
-			j++;
+			res[j++].value = env[i].value;
 		}
 		else
 		{
 			free(env[i].key);
 			free(env[i].value);
 		}
-		i++;
 	}
-	res[j].key = NULL;
-	res[j].value = NULL;
 	return (res);
 }
 

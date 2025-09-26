@@ -55,9 +55,9 @@ int	builtin_echo(char **args)
 	int		j;
 	bool	no_newline;
 
-	i = 1;
+	i = 0;
 	no_newline = false;
-	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
+	while (args[++i] && args[i][0] == '-' && args[i][1] == 'n')
 	{
 		j = 1;
 		while (args[i][j] == 'n')
@@ -65,14 +65,13 @@ int	builtin_echo(char **args)
 		if (args[i][j] != '\0')
 			break ;
 		no_newline = true;
-		i++;
 	}
-	while (args[i])
+	i--;
+	while (args[++i])
 	{
 		ft_printf("%s", args[i]);
 		if (args[i + 1])
 			ft_printf(" ");
-		i++;
 	}
 	if (!no_newline)
 		ft_printf("\n");
@@ -81,55 +80,56 @@ int	builtin_echo(char **args)
 
 int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
 {
-    char *builtin = cmd->args[0];
+	char	*builtin;
 
-    if (ft_strncmp(builtin, "echo", 5) == 0)
-        return builtin_echo(cmd->args);
-    else if (ft_strncmp(builtin, "cd", 3) == 0)
-        return builtin_cd(cmd->args, exe);
-    else if (ft_strncmp(builtin, "pwd", 4) == 0)
-        return builtin_pwd();
-    else if (ft_strncmp(builtin, "export", 7) == 0)
-        return builtin_export(cmd->args, exe);
-    else if (ft_strncmp(builtin, "unset", 6) == 0)
-        return builtin_unset(cmd->args, exe);
-    else if (ft_strncmp(builtin, "env", 4) == 0)
-        return builtin_env(exe);
-    else if (ft_strncmp(builtin, "exit", 5) == 0)
-        return builtin_exit(cmd->args);
-    return -1;
+	builtin = cmd->args[0];
+	if (ft_strncmp(builtin, "echo", 5) == 0)
+		return (builtin_echo(cmd->args));
+	else if (ft_strncmp(builtin, "cd", 3) == 0)
+		return (builtin_cd(cmd->args, exe));
+	else if (ft_strncmp(builtin, "pwd", 4) == 0)
+		return (builtin_pwd());
+	else if (ft_strncmp(builtin, "export", 7) == 0)
+		return (builtin_export(cmd->args, exe));
+	else if (ft_strncmp(builtin, "unset", 6) == 0)
+		return (builtin_unset(cmd->args, exe));
+	else if (ft_strncmp(builtin, "env", 4) == 0)
+		return (builtin_env(exe));
+	else if (ft_strncmp(builtin, "exit", 5) == 0)
+		return (builtin_exit(cmd->args));
+	return (-1);
 }
 
-int is_env_builtin(const char *cmd)
+int	is_env_builtin(const char *cmd)
 {
-    if (!cmd)
-        return 0;
-    if (ft_strncmp(cmd, "cd", 3) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "unset", 6) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "export", 7) == 0)
-        return 1;
-    return 0;
+	if (!cmd)
+		return (0);
+	if (ft_strncmp(cmd, "cd", 3) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "export", 7) == 0)
+		return (1);
+	return (0);
 }
 
-int is_builtin(const char *cmd)
+int	is_builtin(const char *cmd)
 {
-    if (!cmd)
-        return 0;
-    if (ft_strncmp(cmd, "echo", 5) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "cd", 3) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "pwd", 4) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "export", 7) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "unset", 6) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "env", 4) == 0)
-        return 1;
-    if (ft_strncmp(cmd, "exit", 5) == 0)
-        return 1;
-    return 0;
+	if (!cmd)
+		return (0);
+	if (ft_strncmp(cmd, "echo", 5) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "cd", 3) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "export", 7) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "env", 4) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "exit", 5) == 0)
+		return (1);
+	return (0);
 }

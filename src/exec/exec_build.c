@@ -34,8 +34,7 @@ static char	**duplicate_args(char **src)
 		{
 			while (--i >= 0)
 				free(dst[i]);
-			free(dst);
-			return (NULL);
+			return (free(dst), NULL);
 		}
 	}
 	dst[cnt] = NULL;
@@ -59,31 +58,34 @@ static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out)
 	return (node);
 }
 
+void	open_files(t_command_data *cur, int *fd_in, int *fd_out, int *skip)
+{
+	*fd_in = open_infiles(cur->redir_in);
+	if (*fd_in == -1)
+		*skip = 1;
+	*fd_out = open_outfiles(cur->redir_out);
+	if (*fd_out == -1)
+		*skip = 1;
+}
+
 t_cmd_data	*interpreter(t_pars_data *pars)
 {
 	t_list			*lst;
 	t_command_data	*cur;
 	t_cmd_data		*cmds;
 	t_cmd_data		*node;
-	int				fd_in;
-	int				fd_out;
-	int				skip;
+	int				fds_and_skip[3];
 
 	cmds = NULL;
 	lst = pars->commands;
 	while (lst)
 	{
 		cur = (t_command_data *)lst->content;
-		skip = 0;
-		fd_in = open_infiles(cur->redir_in);
-		if (fd_in == -1)
-			skip = 1;
-		fd_out = open_outfiles(cur->redir_out);
-		if (fd_out == -1)
-			skip = 1;
-		if (!skip)
+		fds_and_skip[2] = 0;
+		open_files(cur, &fds_and_skip[0], &fds_and_skip[1], &fds_and_skip[2]);
+		if (!fds_and_skip[2])
 		{
-			node = build_cmd_node(cur, fd_in, fd_out);
+			node = build_cmd_node(cur, fds_and_skip[0], fds_and_skip[1]);
 			if (node)
 				cmd_add_back(&cmds, node);
 		}

@@ -12,11 +12,10 @@
 
 #include "../../includes/minishell.h"
 
-t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
+t_exe_data	init_exe(t_env_data **env, t_pars_data *pars)
 {
-	t_exe_data exe;
+	t_exe_data	exe;
 
-	// Keep a reference to the env handle (so env_set/env_unset can reallocate)
 	exe.env = env;
 	exe.pars = pars;
 	exe.prev_pipe = -1;
@@ -24,9 +23,9 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
 	return (exe);
 }
 
-static t_env_data **free_error(t_env_data *arr, int count)
+static t_env_data	**free_error(t_env_data *arr, int count)
 {
-	int j;
+	int	j;
 
 	j = -1;
 	while ((++j) < count)
@@ -35,20 +34,22 @@ static t_env_data **free_error(t_env_data *arr, int count)
 		free((arr)[j].value);
 	}
 	free(arr);
-return (NULL);
+	return (NULL);
 }
 
 static t_env_data	*boucle_init_env(char **envp, t_env_data *arr, int count)
 {
-	int i;
+	int		i;
+	char	*equal;
+	size_t	key_len;
 
 	i = -1;
 	while ((++i) < count)
 	{
-		char *equal = ft_strchr(envp[i], '=');
+		equal = ft_strchr(envp[i], '=');
 		if (equal)
 		{
-			size_t key_len = (size_t)(equal - envp[i]);
+			key_len = (size_t)(equal - envp[i]);
 			arr[i].key = ft_strndup(envp[i], key_len);
 			arr[i].value = ft_strdup(equal + 1);
 		}
@@ -65,7 +66,7 @@ static t_env_data	*boucle_init_env(char **envp, t_env_data *arr, int count)
 	return (arr);
 }
 
-t_env_data **init_env(char **envp)
+t_env_data	**init_env(char **envp)
 {
 	int			count;
 	t_env_data	*arr;
