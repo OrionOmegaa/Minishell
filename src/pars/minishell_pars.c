@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/22 19:10:25 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/26 09:40:27 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void clear_input_buffer(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &old_termios);
 }
 
+//Norme à faire (urgent)
 void	minishell(t_env_data **env)
 {
 	char		*line;

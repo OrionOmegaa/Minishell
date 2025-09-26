@@ -37,14 +37,23 @@ int handle_heredoc(char *delimiter)
     return pipefd[0];
 }
 
+int error_open(t_redir *redir, int std, int fd)
+{
+    perror(redir->file);
+    if (fd != std)
+        close(fd);
+    return (-1);
+}
+
 int open_outfiles(t_list *redir_out)
 {
-    int     fd = STDOUT_FILENO;
+    int     fd;
     int     tmp_fd;
     t_redir *redir;
 
+    fd = STDOUT_FILENO;
     if (!redir_out)
-        return (STDOUT_FILENO);
+        return (fd);
     while (redir_out)
     {
         redir = (t_redir *)redir_out->content;
@@ -53,28 +62,24 @@ int open_outfiles(t_list *redir_out)
         else
             tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
         if (tmp_fd == -1)
-        {
-            perror(redir->file);
-            if (fd != STDOUT_FILENO)
-                close(fd);
-            return -1;
-        }
+            return (error_open(redir, STDOUT_FILENO, fd));
         if (fd != STDOUT_FILENO)
             close(fd);
         fd = tmp_fd;
         redir_out = redir_out->next;
     }
-    return fd;
+    return (fd);
 }
 
 int open_infiles(t_list *redir_in)
 {
-    int fd = STDIN_FILENO;
+    int fd;
     int tmp_fd;
     t_redir *redir;
 
+    fd = STDIN_FILENO;
     if (!redir_in)
-        return (STDIN_FILENO);
+        return (fd);
     while (redir_in)
     {
         redir = (t_redir *)redir_in->content;
@@ -83,16 +88,11 @@ int open_infiles(t_list *redir_in)
         else
             tmp_fd = open(redir->file, O_RDONLY);
         if (tmp_fd == -1)
-        {
-            perror(redir->file);
-            if (fd != STDIN_FILENO)
-                close(fd);
-            return -1;
-        }
+            return (error_open(redir, STDIN_FILENO, fd));
         if (fd != STDIN_FILENO)
             close(fd);
         fd = tmp_fd;
         redir_in = redir_in->next;
     }
-    return fd;
+    return (fd);
 }

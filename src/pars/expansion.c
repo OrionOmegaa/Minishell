@@ -39,6 +39,7 @@ int get_var_name_len(char *str)
     return (len);
 }
 
+//Norme à faire
 char *expand_variables(char *input, t_env_data **env)
 {
     if (!input)

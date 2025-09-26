@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/30 14:17:04 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/26 09:37:32 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int  env_len(t_env_data *env)
     return (len);
 }
 
+//Norme à faire
 t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
@@ -72,6 +73,7 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 	return (env);
 }
 
+//Norme à faire
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {
 	t_env_data	*res;

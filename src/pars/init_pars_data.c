@@ -38,6 +38,7 @@ bool is_commands(char *line, int i)
     return (true);
 }
 
+//Norme à faire
 int check_syntax_errors(char *line)
 {
     char *trim;
@@ -159,6 +160,7 @@ int add_redirection(t_list **redir_list, char *file, int append, int here_doc)
     return (0);
 }
 
+//Norme à faire (urgent)
 t_command_data *pars_single_command(char *cmd_str)
 {
     t_command_data *cmd;
@@ -313,6 +315,7 @@ t_command_data *pars_single_command(char *cmd_str)
     return (cmd);
 }
 
+//Norme à faire
 char *get_next_token(char *str, int *index)
 {
     int start = *index;
@@ -358,6 +361,7 @@ int is_redirect_char(char c)
     return (c == '<' || c == '>');
 }
 
+//Norme à faire
 char **split_by_pipes(char *line, int *cmd_count)
 {
     char **commands;
@@ -430,6 +434,7 @@ char **split_by_pipes(char *line, int *cmd_count)
     return (commands);
 }
 
+//Norme à faire
 int parse_command_line(t_pars_data *pars, char *line)
 {
     char **cmd_strings;

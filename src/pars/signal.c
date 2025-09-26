@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 11:29:20 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/24 11:48:30 by abonnard         ###   ########.fr       */
+/*   Updated: 2025/09/25 16:28:46 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,18 @@ void	cleanup_shell(void)
 	t_env_data *arr;
 	int        i;
 
-	if (!g_shell.env || !*g_shell.env)
+	if (!g_shell.env || !g_shell.env[0])
 		return;
-	arr = *g_shell.env;
+	arr = g_shell.env[0];
 	i = -1;
 	while (arr[++i].key != NULL)
 	{
-		free(arr[i].key);
-		free(arr[i].value);
+		if (arr[i].key)
+			free(arr[i].key);
+		if (arr[i].value)
+			free(arr[i].value);
 	}
 	free(arr);
 	free(g_shell.env);
 	g_shell.env = NULL;
-	/*if (g_shell.env)
-	{
-		i = -1;
-		while (g_shell.env[++i]->key != NULL)
-		{
-			free(g_shell.env[i]->key);
-			free(g_shell.env[i]->value);
-		}
-		free(g_shell.env);
-		g_shell.env = NULL;
-	}*/
 }

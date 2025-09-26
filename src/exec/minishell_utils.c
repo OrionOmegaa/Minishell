@@ -32,6 +32,7 @@ int count_args(char *input)
     }
     return count;
 }
+
 void exit_with_error(const char *msg, int code)
 {
     perror(msg);
@@ -65,32 +66,43 @@ void	ft_free_tab(char **tab)
 	}
 	free(tab);
 }
-void free_cmd(t_cmd_data *cmd)
+
+static bool path_in_args(t_cmd_data *cmd)
 {
-    if (!cmd)
-        return;
-    if (cmd->args && cmd->path && cmd->args[0] == cmd->path) {
-        exit(1);
-    }
-    int path_in_args = 0;
+    bool path_in_args;
+    int i;
+    int j;
+
+    path_in_args = false;
     if (cmd->args && cmd->path)
     {
-        for (int j = 0; cmd->args[j]; j++)
+        j = -1;
+        while (cmd->args[++j])
         {
             if (cmd->args[j] == cmd->path)
             {
-                path_in_args = 1;
+                path_in_args = true;
                 break;
             }
         }
     }
     if (cmd->args)
     {
-        for (int i = 0; cmd->args[i]; i++)
+        i = 0;
+        while (cmd->args[++i])
             free(cmd->args[i]);
         free(cmd->args);
     }
-    if (cmd->path && !path_in_args)
+    return (path_in_args);
+}
+
+void free_cmd(t_cmd_data *cmd)
+{
+    if (!cmd)
+        return;
+    if (cmd->args && cmd->path && cmd->args[0] == cmd->path)
+        exit(1);
+    if (cmd->path && !path_in_args())
         free(cmd->path);
     if (cmd->fd_in > 2)
         close(cmd->fd_in);

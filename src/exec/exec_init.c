@@ -24,19 +24,26 @@ t_exe_data init_exe(t_env_data **env, t_pars_data *pars)
     return (exe);
 }
 
-t_env_data **init_env(char **envp)
+static t_env_data **free_error(t_env_data *arr, int count)
 {
-    int         count;
-    t_env_data  *arr;
-    t_env_data  **handle;
+    int j;
 
-    count = 0;
-    while (envp[count])
-        count++;
-    arr = (t_env_data *)malloc(sizeof(t_env_data) * (count + 1));
-    if (!arr)
-        return (NULL);
-    for (int i = 0; i < count; i++)
+    j = -1;
+    while ((++j) < count)
+    {
+        free((arr)[j].key);
+        free((arr)[j].value);
+    }
+    free(arr);
+    return (NULL);
+}
+
+static t_env_data *boucle_init_env(char **envp, t_env_data *arr, int count)
+{
+    int i;
+
+    i = -1;
+    while ((++i) < count)
     {
         char *equal = ft_strchr(envp[i], '=');
         if (equal)
@@ -51,30 +58,29 @@ t_env_data **init_env(char **envp)
             arr[i].value = NULL;
         }
         if (!arr[i].key)
-        {
-            // best-effort cleanup on partial failure
-            for (int j = 0; j < i; j++)
-            {
-                free(arr[j].key);
-                free(arr[j].value);
-            }
-            free(arr);
-            return (NULL);
-        }
+            return (*(free_error(arr, count)));
     }
     arr[count].key = NULL;
     arr[count].value = NULL;
+    return (arr);
+}
+
+t_env_data **init_env(char **envp)
+{
+    int         count;
+    t_env_data  *arr;
+    t_env_data  **handle;
+
+    count = 0;
+    while (envp[count])
+        count++;
+    arr = (t_env_data *)malloc(sizeof(t_env_data) * (count + 1));
+    if (!arr)
+        return (NULL);
+    arr = boucle_init_env(envp, arr, count);
     handle = (t_env_data **)malloc(sizeof(t_env_data *));
     if (!handle)
-    {
-        for (int j = 0; j < count; j++)
-        {
-            free(arr[j].key);
-            free(arr[j].value);
-        }
-        free(arr);
-        return (NULL);
-    }
+        return (free_error(arr, count));
     *handle = arr;
     return (handle);
 }

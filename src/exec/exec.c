@@ -146,23 +146,20 @@ static void  free_cmd_list(t_cmd_data *cmd_list)
     }
 }
 
-static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
+static bool cas_execute(t_exe_data *exe, t_cmd_data *cmds)
 {
-    t_cmd_data *cmds;
-    t_cmd_data *current;
-    int fds[2];
+    int saved_status;
 
-    cmds = interpreter(cmd);
     if (!cmds)
-        return ;
+        return (true);
     if (!cmds->next && cmds->args && is_env_builtin(cmds->args[0]))
     {
-        int saved_status = g_shell.exit_status;
+        saved_status = g_shell.exit_status;
         exec_builtin(cmds, exe);
         if (strcmp(cmds->args[0], "echo") == 0)
             g_shell.exit_status = saved_status;
         free_cmd_list(cmds);
-        return ;
+        return (true);
     }
     if (!cmds->next && cmds->args && strcmp(cmds->args[0], "exit") == 0)
     {
@@ -170,26 +167,64 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
         free_cmd_list(cmds);
         write(STDOUT_FILENO, "exit\n", 5);
         g_shell.running = 0;
-        return ;
+        return (true);
     }
+    return (false);
+}
+
+static bool cond_boucle(t_cmd_data *current, int fds[2])
+{
+    if (current->skip_cmd)
+    {
+        current = current->next;
+        return (true);
+    }
+    if (current->next)
+    {
+        if (pipe(fds) < 0)
+            exit_with_error("pipe", 1);
+    }
+    else
+    {
+        fds[0] = -1;
+        fds[1] = -1;
+    }
+    return (false);
+}
+
+static void     last_status(t_cmd_data *current)
+{
+    int last_status;
+    int status;
+
+    last_status = 0;
+    while (current)
+    {
+        if (!current->skip_cmd)
+        {
+            waitpid(current->pid, &status, 0);
+            if (WIFEXITED(status))
+                last_status = WEXITSTATUS(status);
+        }
+        current = current->next;
+    }
+    g_shell.exit_status = last_status;
+}
+
+static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
+{
+    t_cmd_data *cmds;
+    t_cmd_data *current;
+    int fds[2];
+
+    cmds = interpreter(cmd);
+    if (cas_execute(exe, cmds))
+        return ;
     current = cmds;
     while (current)
     {
-        if (current->skip_cmd)
-        {
-            current = current->next;
+        if (cond_boucle(cmds, fds))
             continue;
-        }
-        if (current->next)
-        {
-            if (pipe(fds) < 0)
-                exit_with_error("pipe", 1);
-        }
-        else
-        {
-            fds[0] = -1;
-            fds[1] = -1;
-        }
         current->pid = fork();
         if (current->pid < 0)
             exit_with_error("fork", 1);
@@ -200,19 +235,7 @@ static void    execute_pipeline(t_exe_data *exe, t_pars_data *cmd)
         current = current->next;
     }
     current = cmds;
-    int last_status = 0;
-    while (current)
-    {
-        if (!current->skip_cmd)
-        {
-            int status;
-            waitpid(current->pid, &status, 0);
-            if (WIFEXITED(status))
-                last_status = WEXITSTATUS(status);
-        }
-        current = current->next;
-    }
-    g_shell.exit_status = last_status;
+    last_status(current);
     free_cmd_list(cmds);
 }
 
