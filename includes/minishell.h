@@ -6,7 +6,7 @@
 /*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/09/26 13:22:33 by abonnard         ###   ########.fr       */
+/*   Updated: 2025/09/26 22:33:17 by abonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,10 @@ void						last_status(t_cmd_data *cur);
 void						free_cmd_list(t_cmd_data *lst);
 void						execute_pipeline(t_exe_data *exe,
 								t_pars_data *pars);
+bool						execute_single_builtin(t_exe_data *exe,
+								t_cmd_data *cmds);
+bool						execute_single_exit(t_cmd_data *cmds);
+bool						prepare_fds(t_cmd_data *cur, int fds[2]);
 
 /* ******************************** BUILTINS ******************************* */
 int							builtin_cd(char **args, t_exe_data *exe);
