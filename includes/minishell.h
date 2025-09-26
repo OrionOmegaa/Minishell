@@ -6,7 +6,7 @@
 /*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/09/26 22:33:17 by abonnard         ###   ########.fr       */
+/*   Updated: 2025/09/26 23:04:42 by abonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,4 +193,12 @@ char						*expand_variables(char *input, t_env_data **env);
 int							get_var_name_len(char *str);
 char						*get_env_value(t_env_data **env, char *key);
 int							cmd_count(t_list *lst);
+int							check_syntax_errors(char *line);
+int							count_segments(char *line);
+int							iterate_segments(char *line, char **cmds);
+void						update_quote(char c, bool *in_q, char *q);
+int							iterate_segments_body(char *line, char **cmds);
+int						final_syntax_check(char *trim, int len);
+void					print_redir_pair(char a, char b);
+bool					is_commands(char *line, int i);
 #endif
