@@ -12,9 +12,9 @@
 
 #include "../../includes/minishell.h"
 
-t_shell g_shell = {NULL, 1, 0, 0};
+t_shell	g_shell = {NULL, 1, 0, 0};
 
-void handle_signal(int sig)
+void	handle_signal(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -28,7 +28,7 @@ void handle_signal(int sig)
 		g_shell.signal_received = SIGTERM;
 }
 
-void init_signals(void)
+void	init_signals(void)
 {
 	rl_catch_signals = 0;
 	rl_catch_sigwinch = 0;
@@ -39,11 +39,11 @@ void init_signals(void)
 
 void	cleanup_shell(void)
 {
-	t_env_data *arr;
-	int        i;
+	t_env_data	*arr;
+	int			i;
 
 	if (!g_shell.env || !g_shell.env[0])
-		return;
+		return ;
 	arr = g_shell.env[0];
 	i = -1;
 	while (arr[++i].key != NULL)

@@ -13,65 +13,59 @@
 #include "../../includes/minishell.h"
 #include <termios.h>
 
-void clear_input_buffer(void)
+void	clear_input_buffer(void)
 {
-    struct termios old_termios;
-    struct termios new_termios;
-    char c;
-    if (tcgetattr(STDIN_FILENO, &old_termios) != 0)
-        return;
-    new_termios = old_termios;
-    new_termios.c_cc[VMIN] = 0;
-    new_termios.c_cc[VTIME] = 0;
-    if (tcsetattr(STDIN_FILENO, TCSANOW, &new_termios) != 0)
-        return;
-    while (read(STDIN_FILENO, &c, 1) > 0)
-        ;
-    tcsetattr(STDIN_FILENO, TCSANOW, &old_termios);
+	struct termios	old_termios;
+	struct termios	new_termios;
+	char			c;
+
+	if (tcgetattr(STDIN_FILENO, &old_termios) != 0)
+		return ;
+	new_termios = old_termios;
+	new_termios.c_cc[VMIN] = 0;
+	new_termios.c_cc[VTIME] = 0;
+	if (tcsetattr(STDIN_FILENO, TCSANOW, &new_termios) != 0)
+		return ;
+	while (read(STDIN_FILENO, &c, 1) > 0)
+		;
+	tcsetattr(STDIN_FILENO, TCSANOW, &old_termios);
 }
 
-//Norme à faire (urgent)
+void	handle_line(char *line, t_env_data **env)
+{
+	t_pars_data	*pars;
+
+	add_history(line);
+	pars = init_pars_data(line);
+	if (pars)
+		executor(env, pars);
+	if (pars)
+		free_pars_data(pars);
+}
+
+// A tester, j'ai fait des modifs plutot violentes,
+// je sais pas si ca a pas casser un truc. Leo :D
 void	minishell(t_env_data **env)
 {
-	char		*line;
-	t_pars_data	*pars;
+	char	*line;
 
 	while (g_shell.running)
 	{
-        if (g_shell.signal_received != 0)
-        {
-            if (g_shell.signal_received == SIGINT)
-            {
-                g_shell.signal_received = 0;
-                continue;
-            }
-            else if (g_shell.signal_received == SIGTERM)
-            {
-                g_shell.running = 0;
-                break;
-            }
-            g_shell.signal_received = 0;
-        }
-        pars = NULL;
+		if (g_shell.signal_received == SIGINT)
+		{
+			g_shell.signal_received = 0;
+			continue ;
+		}
+		else if (g_shell.signal_received == SIGTERM)
+			break ;
 		line = readline("\001\033[1;36m\002Minishell> \001\033[0m\002");
 		if (!line)
 		{
-            write(STDOUT_FILENO, "exit\n", 5);
-			g_shell.running = 0;
+			write(STDOUT_FILENO, "exit\n", 5);
 			break ;
 		}
-		if (*line) 
-        {
-            add_history(line);
-            pars = init_pars_data(line);
-            if (pars)
-                executor(env, pars);
-        }
-        if (pars)
-        {
-            free_pars_data(pars);
-            pars = NULL;
-        }
+		if (*line)
+			handle_line(line, env);
 		free(line);
-    }
+	}
 }

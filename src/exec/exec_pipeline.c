@@ -54,6 +54,17 @@ static bool	prepare_fds(t_cmd_data *cur, int fds[2])
 	return (false);
 }
 
+void	fork_process(t_exe_data *exe, t_cmd_data *cur, int fds[2])
+{
+	cur->pid = fork();
+	if (cur->pid < 0)
+		exit_with_error("fork", 1);
+	if (!cur->pid)
+		child_process(exe, cur, fds);
+	else
+		parent_process(exe, cur, fds);
+}
+
 void	execute_pipeline(t_exe_data *exe, t_pars_data *pars)
 {
 	t_cmd_data	*cmds;
@@ -73,13 +84,7 @@ void	execute_pipeline(t_exe_data *exe, t_pars_data *pars)
 			cur = cur->next;
 			continue ;
 		}
-		cur->pid = fork();
-		if (cur->pid < 0)
-			exit_with_error("fork", 1);
-		if (!cur->pid)
-			child_process(exe, cur, fds);
-		else
-			parent_process(exe, cur, fds);
+		fork_process(exe, cur, fds);
 		cur = cur->next;
 	}
 	last_status(cmds);

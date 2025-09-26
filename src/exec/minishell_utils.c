@@ -12,46 +12,46 @@
 
 #include "../../includes/minishell.h"
 
-int count_args(char *input)
+int	count_args(char *input)
 {
-    int count;
-    int in_word;
+	int	count;
+	int	in_word;
 
-    count = 0;
-    in_word = 0;
-    while (*input)
-    {
-        if (*input == ' ' || *input == '\t')
-            in_word = 0;
-        else if (!in_word)
-        {
-            count++;
-            in_word = 1;
-        }
-        input++;
-    }
-    return count;
+	count = 0;
+	in_word = 0;
+	while (*input)
+	{
+		if (*input == ' ' || *input == '\t')
+			in_word = 0;
+		else if (!in_word)
+		{
+			count++;
+			in_word = 1;
+		}
+		input++;
+	}
+	return (count);
 }
 
-void exit_with_error(const char *msg, int code)
+void	exit_with_error(const char *msg, int code)
 {
-    perror(msg);
-    exit(code);
+	perror(msg);
+	exit(code);
 }
 
 void	free_env_data(t_env_data *env)
 {
-    int	i;
+	int	i;
 
-    if (!env)
-        return ;
-    i = -1;
-    while (env[++i].key != NULL)
-    {
-        free(env[i].key);
-        free(env[i].value);
-    }
-    free(env);
+	if (!env)
+		return ;
+	i = -1;
+	while (env[++i].key != NULL)
+	{
+		free(env[i].key);
+		free(env[i].value);
+	}
+	free(env);
 }
 
 void	ft_free_tab(char **tab)
@@ -67,65 +67,65 @@ void	ft_free_tab(char **tab)
 	free(tab);
 }
 
-static bool path_in_args(t_cmd_data *cmd)
+static bool	path_in_args(t_cmd_data *cmd)
 {
-    int i;
+	int	i;
 
-    if (!cmd || !cmd->args || !cmd->path)
-        return (false);
-    i = 0;
-    while (cmd->args[i])
-    {
-        if (cmd->args[i] == cmd->path)
-            return (true);
-        i++;
-    }
-    return (false);
+	if (!cmd || !cmd->args || !cmd->path)
+		return (false);
+	i = 0;
+	while (cmd->args[i])
+	{
+		if (cmd->args[i] == cmd->path)
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
-void free_cmd(t_cmd_data *cmd)
+void	free_cmd(t_cmd_data *cmd)
 {
-    bool in_args;
-    int  i;
+	bool	in_args;
+	int		i;
 
-    if (!cmd)
-        return ;
-    in_args = path_in_args(cmd);
-    if (cmd->args)
-    {
-        i = 0;
-        while (cmd->args[i])
-            free(cmd->args[i++]);
-        free(cmd->args);
-    }
-    if (cmd->path && !in_args)
-        free(cmd->path);
-    if (cmd->fd_in > 2)
-        close(cmd->fd_in);
-    if (cmd->fd_out > 2)
-        close(cmd->fd_out);
-    free(cmd);
+	if (!cmd)
+		return ;
+	in_args = path_in_args(cmd);
+	if (cmd->args)
+	{
+		i = 0;
+		while (cmd->args[i])
+			free(cmd->args[i++]);
+		free(cmd->args);
+	}
+	if (cmd->path && !in_args)
+		free(cmd->path);
+	if (cmd->fd_in > 2)
+		close(cmd->fd_in);
+	if (cmd->fd_out > 2)
+		close(cmd->fd_out);
+	free(cmd);
 }
 
-int free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
+int	free_exe(t_exe_data *exe, int ret_val, int free_envp, char *err_msg)
 {
-    t_cmd_data *tmp;
+	t_cmd_data	*tmp;
+	int			i;
 
-    while (exe->cmds)
-    {
-        tmp = exe->cmds->next;
-        free_cmd(exe->cmds);
-        exe->cmds = tmp;
-    }
-    if (free_envp && exe->envp)
-    {
-        int i = 0;
-        while (exe->envp[i])
-            free(exe->envp[i++]);
-        free(exe->envp);
-    }
-    // exe->env is a handle allocated in init_env; do not free here (cleanup_shell owns it)
-    if (err_msg)
-        write(2, err_msg, strlen(err_msg));
-    return ret_val;
+	while (exe->cmds)
+	{
+		tmp = exe->cmds->next;
+		free_cmd(exe->cmds);
+		exe->cmds = tmp;
+	}
+	if (free_envp && exe->envp)
+	{
+		i = 0;
+		while (exe->envp[i])
+			free(exe->envp[i++]);
+		free(exe->envp);
+	}
+	if (err_msg)
+		write(2, err_msg, strlen(err_msg));
+	return (ret_val);
 }

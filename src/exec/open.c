@@ -12,87 +12,89 @@
 
 #include "../../includes/minishell.h"
 
-int handle_heredoc(char *delimiter)
+int	handle_heredoc(char *delimiter)
 {
-    int pipefd[2];
-    char *line;
-    
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        return -1;
-    }
-    while ((line = readline("> ")) != NULL)
-    {
-        if (strcmp(line, delimiter) == 0)
-        {
-            free(line);
-            break;
-        }
-        write(pipefd[1], line, strlen(line));
-        write(pipefd[1], "\n", 1);
-        free(line);
-    }
-    close(pipefd[1]);
-    return pipefd[0];
+	int		pipefd[2];
+	char	*line;
+
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		return (-1);
+	}
+	line = readline("> ");
+	while (line != NULL)
+	{
+		if (strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(pipefd[1], line, strlen(line));
+		write(pipefd[1], "\n", 1);
+		free(line);
+		line = readline("> ");
+	}
+	close(pipefd[1]);
+	return (pipefd[0]);
 }
 
-int error_open(t_redir *redir, int std, int fd)
+int	error_open(t_redir *redir, int std, int fd)
 {
-    perror(redir->file);
-    if (fd != std)
-        close(fd);
-    return (-1);
+	perror(redir->file);
+	if (fd != std)
+		close(fd);
+	return (-1);
 }
 
-int open_outfiles(t_list *redir_out)
+int	open_outfiles(t_list *redir_out)
 {
-    int     fd;
-    int     tmp_fd;
-    t_redir *redir;
+	int		fd;
+	int		tmp_fd;
+	t_redir	*redir;
 
-    fd = STDOUT_FILENO;
-    if (!redir_out)
-        return (fd);
-    while (redir_out)
-    {
-        redir = (t_redir *)redir_out->content;
-        if (redir->append)
-            tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        else
-            tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (tmp_fd == -1)
-            return (error_open(redir, STDOUT_FILENO, fd));
-        if (fd != STDOUT_FILENO)
-            close(fd);
-        fd = tmp_fd;
-        redir_out = redir_out->next;
-    }
-    return (fd);
+	fd = STDOUT_FILENO;
+	if (!redir_out)
+		return (fd);
+	while (redir_out)
+	{
+		redir = (t_redir *)redir_out->content;
+		if (redir->append)
+			tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			tmp_fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (tmp_fd == -1)
+			return (error_open(redir, STDOUT_FILENO, fd));
+		if (fd != STDOUT_FILENO)
+			close(fd);
+		fd = tmp_fd;
+		redir_out = redir_out->next;
+	}
+	return (fd);
 }
 
-int open_infiles(t_list *redir_in)
+int	open_infiles(t_list *redir_in)
 {
-    int fd;
-    int tmp_fd;
-    t_redir *redir;
+	int		fd;
+	int		tmp_fd;
+	t_redir	*redir;
 
-    fd = STDIN_FILENO;
-    if (!redir_in)
-        return (fd);
-    while (redir_in)
-    {
-        redir = (t_redir *)redir_in->content;
-        if (redir->here_doc)
-            tmp_fd = handle_heredoc(redir->file);
-        else
-            tmp_fd = open(redir->file, O_RDONLY);
-        if (tmp_fd == -1)
-            return (error_open(redir, STDIN_FILENO, fd));
-        if (fd != STDIN_FILENO)
-            close(fd);
-        fd = tmp_fd;
-        redir_in = redir_in->next;
-    }
-    return (fd);
+	fd = STDIN_FILENO;
+	if (!redir_in)
+		return (fd);
+	while (redir_in)
+	{
+		redir = (t_redir *)redir_in->content;
+		if (redir->here_doc)
+			tmp_fd = handle_heredoc(redir->file);
+		else
+			tmp_fd = open(redir->file, O_RDONLY);
+		if (tmp_fd == -1)
+			return (error_open(redir, STDIN_FILENO, fd));
+		if (fd != STDIN_FILENO)
+			close(fd);
+		fd = tmp_fd;
+		redir_in = redir_in->next;
+	}
+	return (fd);
 }

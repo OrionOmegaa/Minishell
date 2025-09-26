@@ -12,529 +12,549 @@
 
 #include "../../includes/minishell.h"
 
-int is_space(char c)
+int	is_space(char c)
 {
-    return (c == ' ' || c == '\t' || c == '\b' || c == '\0');
+	return (c == ' ' || c == '\t' || c == '\b' || c == '\0');
 }
 
-int is_syntax(char c)
+int	is_syntax(char c)
 {
-    return (c == '|' || c == '<' || c == '>');
+	return (c == '|' || c == '<' || c == '>');
 }
 
-bool is_commands(char *line, int i)
+bool	is_commands(char *line, int i)
 {
-    if (!line[i])
-        return (false);
-    else if (is_space(line[i]))
-    {
-        if (line[i+1] && !is_space(line[i+1]) && !is_syntax(line[i+1]))
-            return (true);
-        else
-            return (false);
-    }
-    else if (is_syntax(line[i]) && !is_commands(line, i + 1))
-        return (false);
-    return (true);
+	if (!line[i])
+		return (false);
+	else if (is_space(line[i]))
+	{
+		if (line[i + 1] && !is_space(line[i + 1]) && !is_syntax(line[i + 1]))
+			return (true);
+		else
+			return (false);
+	}
+	else if (is_syntax(line[i]) && !is_commands(line, i + 1))
+		return (false);
+	return (true);
 }
 
-//Norme à faire
-int check_syntax_errors(char *line)
+// Norme à faire
+int	check_syntax_errors(char *line)
 {
-    char *trim;
-    int len;
-    int i;
+	char	*trim;
+	int		len;
+	int		i;
 
-    if (!line)
-        return (0);
-    trim = ft_strtrim(line, " \t");
-    if (!trim)
-        return (0);
-    len = ft_strlen(trim);
-    if (len == 0)
-    {
-        free(trim);
-        return (0);
-    }
-    else if (trim[0] == '|')
-    {
-        if (trim[1] == '|')
-            printf("bash: syntax error near unexpected token `||'\n");
-        else
-            printf("bash: syntax error near unexpected token `|'\n");
-        free(trim);
-        return (1);
-    }
-    else if (len > 0 && trim[len-1] == '|')
-    {
-        printf("bash: syntax error near unexpected token `newline'\n");
-        free(trim);
-        return (1);
-    }
-    i = -1;
-    while (trim[++i])
-    {
-        if (trim[i] == '|' && !is_commands(trim, i + 1))
-        {
-            if (trim[i+1] == '|' && !is_commands(trim, i + 2))
-                printf("bash: syntax error near unexpected token `||'\n");
-            else if (is_commands(trim, i + 2))
-                continue;
-            else
-                printf("bash: syntax error near unexpected token `|'\n");
-            free(trim);
-            return (1);
-        }
-    }
-    if (trim[0] == '>' || trim[0] == '<')
-    {
-        if ((trim[0] == '>' && trim[1] == '>')|| (trim[0] == '<' && trim[1] == '<'))
-            printf("bash: syntax error near unexpected token `%c%c' \n", trim[0], trim[1]);
-        else
-            printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
-        g_shell.exit_status = 2;
-        free(trim);
-        return (1);
-    }
-    else if (len > 0 && (trim[len-1] == '>' || trim[len-1] == '<'))
-    {
-        if ((trim[len-1] == '>' && trim[len-2] == '>')|| (trim[len-1] == '<' && trim[len-2] == '<'))
-            printf("bash: syntax error near unexpected token `%c%c' \n", trim[0], trim[1]);
-        else
-            printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
-        g_shell.exit_status = 2;
-        free(trim);
-        return (1);
-    }
-    free(trim);
-    return (0);
+	if (!line)
+		return (0);
+	trim = ft_strtrim(line, " \t");
+	if (!trim)
+		return (0);
+	len = ft_strlen(trim);
+	if (len == 0)
+	{
+		free(trim);
+		return (0);
+	}
+	else if (trim[0] == '|')
+	{
+		if (trim[1] == '|')
+			printf("bash: syntax error near unexpected token `||'\n");
+		else
+			printf("bash: syntax error near unexpected token `|'\n");
+		free(trim);
+		return (1);
+	}
+	else if (len > 0 && trim[len - 1] == '|')
+	{
+		printf("bash: syntax error near unexpected token `newline'\n");
+		free(trim);
+		return (1);
+	}
+	i = -1;
+	while (trim[++i])
+	{
+		if (trim[i] == '|' && !is_commands(trim, i + 1))
+		{
+			if (trim[i + 1] == '|' && !is_commands(trim, i + 2))
+				printf("bash: syntax error near unexpected token `||'\n");
+			else if (is_commands(trim, i + 2))
+				continue ;
+			else
+				printf("bash: syntax error near unexpected token `|'\n");
+			free(trim);
+			return (1);
+		}
+	}
+	if (trim[0] == '>' || trim[0] == '<')
+	{
+		if ((trim[0] == '>' && trim[1] == '>') || (trim[0] == '<'
+				&& trim[1] == '<'))
+			printf("bash: syntax error near unexpected token `%c%c' \n",
+				trim[0], trim[1]);
+		else
+			printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
+		g_shell.exit_status = 2;
+		free(trim);
+		return (1);
+	}
+	else if (len > 0 && (trim[len - 1] == '>' || trim[len - 1] == '<'))
+	{
+		if ((trim[len - 1] == '>' && trim[len - 2] == '>') || (trim[len
+					- 1] == '<' && trim[len - 2] == '<'))
+			printf("bash: syntax error near unexpected token `%c%c' \n",
+				trim[0], trim[1]);
+		else
+			printf("bash: syntax error near unexpected token `%c' \n", trim[0]);
+		g_shell.exit_status = 2;
+		free(trim);
+		return (1);
+	}
+	free(trim);
+	return (0);
 }
 
-t_redir *new_redir(char *file, int append, int here_doc)
+t_redir	*new_redir(char *file, int append, int here_doc)
 {
-    t_redir *redir;
+	t_redir	*redir;
 
-    redir = malloc(sizeof(t_redir));
-    if (!redir)
-        return (NULL);
-    redir->file = ft_strdup(file);
-    if (!redir->file)
-    {
-        free(redir);
-        return (NULL);
-    }
-    redir->append = append;
-    redir->here_doc = here_doc;
-    return (redir);
+	redir = malloc(sizeof(t_redir));
+	if (!redir)
+		return (NULL);
+	redir->file = ft_strdup(file);
+	if (!redir->file)
+	{
+		free(redir);
+		return (NULL);
+	}
+	redir->append = append;
+	redir->here_doc = here_doc;
+	return (redir);
 }
 
-t_command_data *new_command_data(void)
+t_command_data	*new_command_data(void)
 {
-    t_command_data *cmd;
+	t_command_data	*cmd;
 
-    cmd = malloc(sizeof(t_command_data));
-    if (!cmd)
-        return (NULL);
-    cmd->raw_args = NULL;
-    cmd->redir_in = NULL;
-    cmd->redir_out = NULL;
-    return (cmd);
+	cmd = malloc(sizeof(t_command_data));
+	if (!cmd)
+		return (NULL);
+	cmd->raw_args = NULL;
+	cmd->redir_in = NULL;
+	cmd->redir_out = NULL;
+	return (cmd);
 }
 
-int add_redirection(t_list **redir_list, char *file, int append, int here_doc)
+int	add_redirection(t_list **redir_list, char *file, int append, int here_doc)
 {
-    t_redir *redir;
-    t_list *node;
+	t_redir	*redir;
+	t_list	*node;
 
-    redir = new_redir(file, append, here_doc);
-    if (!redir)
-        return (-1);
-    node = ft_lstnew((void *)redir);
-    if (!node)
-    {
-        free(redir->file);
-        free(redir);
-        return (-1);
-    }
-    ft_lstadd_back(redir_list, node);
-    return (0);
+	redir = new_redir(file, append, here_doc);
+	if (!redir)
+		return (-1);
+	node = ft_lstnew((void *)redir);
+	if (!node)
+	{
+		free(redir->file);
+		free(redir);
+		return (-1);
+	}
+	ft_lstadd_back(redir_list, node);
+	return (0);
 }
 
-//Norme à faire (urgent)
-t_command_data *pars_single_command(char *cmd_str)
+// Norme à faire (urgent)
+t_command_data	*pars_single_command(char *cmd_str)
 {
-    t_command_data *cmd;
-    char *clean_cmd;
-    char *token;
-    char *current;
-    int i;
-    int j;
+	t_command_data	*cmd;
+	char			*clean_cmd;
+	char			*token;
+	char			*current;
+	int				i;
+	int				j;
+	char			*tmp;
+	int				start;
+	int				len;
 
-    char *tmp = cmd_str;
-    while (*tmp && (*tmp == ' ' || *tmp == '\t'))
-        tmp++;
-    if (!*tmp)
-        return (NULL);
-    cmd = new_command_data();
-    if (!cmd)
-        return (NULL);
-    clean_cmd = malloc((ft_strlen(cmd_str) + 1) * sizeof(char));
-    if (!clean_cmd)
-    {
-        free(cmd);
-        return (NULL);
-    }
-    i = 0;
-    j = 0;
-    current = cmd_str;
-    while (current[i])
-    {
-        if (current[i] == '<')
-        {
-            if (current[i + 1] == '<')
-            {
-                i += 2;
-                while (current[i] && (current[i] == ' '))
-                    i++;
-                if (current[i])
-                {
-                    int start = i;
-                    int len = 0;
-                    while (current[i] && current[i] != ' ' && current[i] != '\t' && current[i] != '<' && current[i] != '>')
-                    {
-                        len++;
-                        i++;
-                    }
-                    if (len > 0)
-                    {
-                        token = malloc(len + 1);
-                        if (token)
-                        {
-                            ft_strlcpy(token, &current[start], len + 1);
-                            add_redirection(&cmd->redir_in, token, 0, 1);
-                            free(token);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                i++;
-                while (current[i] && (current[i] == ' ' || current[i] == '\t'))
-                    i++;
-                if (current[i])
-                {
-                    int start = i;
-                    int len = 0;
-                    while (current[i] && current[i] != ' ' && current[i] != '\t' && current[i] != '<' && current[i] != '>')
-                    {
-                        len++;
-                        i++;
-                    }
-                    if (len > 0)
-                    {
-                        token = malloc(len + 1);
-                        if (token)
-                        {
-                            ft_strlcpy(token, &current[start], len + 1);
-                            add_redirection(&cmd->redir_in, token, 0, 0);
-                            free(token);
-                        }
-                    }
-                }
-            }
-        }
-        else if (current[i] == '>')
-        {
-            if (current[i + 1] == '>')
-            {
-                i+= 2;
-                while (current[i] && (current[i] == ' '))
-                    i++;
-                if (current[i])
-                {
-                    int start = i;
-                    int len = 0;
-                    while (current[i] && current[i] != ' ' && current[i] != '\t' && current[i] != '<' && current[i] != '>')
-                    {
-                        len++;
-                        i++;
-                    }
-                    if (len > 0)
-                    {
-                        token = malloc(len + 1);
-                        if (token)
-                        {
-                            ft_strlcpy(token, &current[start], len + 1);
-                            add_redirection(&cmd->redir_out, token, 1, 0);
-                            free(token);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                i++;
-                while (current[i] && (current[i] == ' ' || current[i] == '\t'))
-                    i++;
-                if (current[i])
-                {
-                    int start = i;
-                    int len = 0;
-                    while (current[i] && current[i] != ' ' && current[i] != '\t' && current[i] != '<' && current[i] != '>')
-                    {
-                        len++;
-                        i++;
-                    }
-                    if (len > 0)
-                    {
-                        token = malloc(len + 1);
-                        if (token)
-                        {
-                            ft_strlcpy(token, &current[start], len + 1);
-                            add_redirection(&cmd->redir_out, token, 0, 0);
-                            free(token);
-                        }
-                    }
-                }
-            }
-        }
-        else
-            clean_cmd[j++] = current[i++];
-    }
-    clean_cmd[j] = '\0';
-    cmd->raw_args = extract_args(clean_cmd);
-    free(clean_cmd);
-    if (!cmd->raw_args)
-    {
-        int i = -1;
-        while (cmd->raw_args[++i])
-        free_command_data(cmd);
-        return (NULL);
-    }
-    return (cmd);
+	tmp = cmd_str;
+	while (*tmp && (*tmp == ' ' || *tmp == '\t'))
+		tmp++;
+	if (!*tmp)
+		return (NULL);
+	cmd = new_command_data();
+	if (!cmd)
+		return (NULL);
+	clean_cmd = malloc((ft_strlen(cmd_str) + 1) * sizeof(char));
+	if (!clean_cmd)
+	{
+		free(cmd);
+		return (NULL);
+	}
+	i = 0;
+	j = 0;
+	current = cmd_str;
+	while (current[i])
+	{
+		if (current[i] == '<')
+		{
+			if (current[i + 1] == '<')
+			{
+				i += 2;
+				while (current[i] && (current[i] == ' '))
+					i++;
+				if (current[i])
+				{
+					start = i;
+					len = 0;
+					while (current[i] && current[i] != ' ' && current[i] != '\t'
+						&& current[i] != '<' && current[i] != '>')
+					{
+						len++;
+						i++;
+					}
+					if (len > 0)
+					{
+						token = malloc(len + 1);
+						if (token)
+						{
+							ft_strlcpy(token, &current[start], len + 1);
+							add_redirection(&cmd->redir_in, token, 0, 1);
+							free(token);
+						}
+					}
+				}
+			}
+			else
+			{
+				i++;
+				while (current[i] && (current[i] == ' ' || current[i] == '\t'))
+					i++;
+				if (current[i])
+				{
+					start = i;
+					len = 0;
+					while (current[i] && current[i] != ' ' && current[i] != '\t'
+						&& current[i] != '<' && current[i] != '>')
+					{
+						len++;
+						i++;
+					}
+					if (len > 0)
+					{
+						token = malloc(len + 1);
+						if (token)
+						{
+							ft_strlcpy(token, &current[start], len + 1);
+							add_redirection(&cmd->redir_in, token, 0, 0);
+							free(token);
+						}
+					}
+				}
+			}
+		}
+		else if (current[i] == '>')
+		{
+			if (current[i + 1] == '>')
+			{
+				i += 2;
+				while (current[i] && (current[i] == ' '))
+					i++;
+				if (current[i])
+				{
+					start = i;
+					len = 0;
+					while (current[i] && current[i] != ' ' && current[i] != '\t'
+						&& current[i] != '<' && current[i] != '>')
+					{
+						len++;
+						i++;
+					}
+					if (len > 0)
+					{
+						token = malloc(len + 1);
+						if (token)
+						{
+							ft_strlcpy(token, &current[start], len + 1);
+							add_redirection(&cmd->redir_out, token, 1, 0);
+							free(token);
+						}
+					}
+				}
+			}
+			else
+			{
+				i++;
+				while (current[i] && (current[i] == ' ' || current[i] == '\t'))
+					i++;
+				if (current[i])
+				{
+					start = i;
+					len = 0;
+					while (current[i] && current[i] != ' ' && current[i] != '\t'
+						&& current[i] != '<' && current[i] != '>')
+					{
+						len++;
+						i++;
+					}
+					if (len > 0)
+					{
+						token = malloc(len + 1);
+						if (token)
+						{
+							ft_strlcpy(token, &current[start], len + 1);
+							add_redirection(&cmd->redir_out, token, 0, 0);
+							free(token);
+						}
+					}
+				}
+			}
+		}
+		else
+			clean_cmd[j++] = current[i++];
+	}
+	clean_cmd[j] = '\0';
+	cmd->raw_args = extract_args(clean_cmd);
+	free(clean_cmd);
+	if (!cmd->raw_args)
+	{
+		i = -1;
+		while (cmd->raw_args[++i])
+			free_command_data(cmd);
+		return (NULL);
+	}
+	return (cmd);
 }
 
-//Norme à faire
-char *get_next_token(char *str, int *index)
+// Norme à faire
+char	*get_next_token(char *str, int *index)
 {
-    int start = *index;
-    int len = 0;
-    char *token;
-    bool in_quotes = false;
-    char quote_char = 0;
+	int		start;
+	int		len;
+	char	*token;
+	bool	in_quotes;
+	char	quote_char;
+	int		str_len;
 
-    if (!str || !index || *index < 0)
-        return NULL;
-    int str_len = strlen(str);
-    if (*index >= str_len)
-        return NULL;
-    while (str[start] && (str[start] == ' ' || str[start] == '\t'))
-        start++;
-    if (!str[start])
-        return (NULL);
-    *index = start;
-    while (str[*index] && ((!ft_isspace(str[*index]) && !is_redirect_char(str[*index])) || in_quotes))
-    {
-        if (is_quote(str[*index]) && !in_quotes)
-        {
-            in_quotes = true;
-            quote_char = str[*index];
-        }
-        else if (str[*index] == quote_char && in_quotes)
-            in_quotes = false;
-        (*index)++;
-        len++;
-    }
-    if (len == 0)
-        return (NULL);
-    token = malloc(len + 1);
-    if (!token)
-        return (NULL);
-    
-    ft_strlcpy(token, &str[start], len + 1);
-    return (token);
+	start = *index;
+	len = 0;
+	in_quotes = false;
+	quote_char = 0;
+	if (!str || !index || *index < 0)
+		return (NULL);
+	str_len = strlen(str);
+	if (*index >= str_len)
+		return (NULL);
+	while (str[start] && (str[start] == ' ' || str[start] == '\t'))
+		start++;
+	if (!str[start])
+		return (NULL);
+	*index = start;
+	while (str[*index] && ((!ft_isspace(str[*index])
+				&& !is_redirect_char(str[*index])) || in_quotes))
+	{
+		if (is_quote(str[*index]) && !in_quotes)
+		{
+			in_quotes = true;
+			quote_char = str[*index];
+		}
+		else if (str[*index] == quote_char && in_quotes)
+			in_quotes = false;
+		(*index)++;
+		len++;
+	}
+	if (len == 0)
+		return (NULL);
+	token = malloc(len + 1);
+	if (!token)
+		return (NULL);
+	ft_strlcpy(token, &str[start], len + 1);
+	return (token);
 }
 
-int is_redirect_char(char c)
+int	is_redirect_char(char c)
 {
-    return (c == '<' || c == '>');
+	return (c == '<' || c == '>');
 }
 
-//Norme à faire
-char **split_by_pipes(char *line, int *cmd_count)
+// Norme à faire
+char	**split_by_pipes(char *line, int *cmd_count)
 {
-    char **commands;
-    int count = 1;
-    int i = 0;
-    bool in_quotes = false;
-    char quote_char = 0;
+	char	**commands;
+	int		count;
+	int		i;
+	bool	in_quotes;
+	char	quote_char;
+	int		cmd_idx;
+	int		start;
 
-    while (line[i])
-    {
-        if (is_quote(line[i]) && !in_quotes)
-        {
-            in_quotes = true;
-            quote_char = line[i];
-        }
-        else if (line[i] == quote_char && in_quotes)
-            in_quotes = false;
-        else if (line[i] == '|' && !in_quotes)
-            count++;
-        i++;
-    }
-    
-    *cmd_count = count;
-    commands = malloc((count + 1) * sizeof(char *));
-    if (!commands)
-        return (NULL);
-    i = 0;
-    int cmd_idx = 0;
-    int start = 0;
-    in_quotes = false;
-    
-    while (line[i])
-    {
-        if (is_quote(line[i]) && !in_quotes)
-        {
-            in_quotes = true;
-            quote_char = line[i];
-        }
-        else if (line[i] == quote_char && in_quotes)
-            in_quotes = false;
-        else if (line[i] == '|' && !in_quotes)
-        {
-            commands[cmd_idx] = ft_substr(line, start, i - start);
-            if (!commands[cmd_idx])
-            {
-                while (cmd_idx > 0)
-                    free(commands[--cmd_idx]);
-                free(commands);
-                return (NULL);
-            }
-            cmd_idx++;
-            start = i + 1;
-        }
-        i++;
-    }
-    commands[cmd_idx] = ft_substr(line, start, i - start + 1);
-    if (!commands[cmd_idx])
-    {
-        while (cmd_idx > 0)
-            free(commands[--cmd_idx]);
-        free(commands);
-        return (NULL);
-    }
-    if (ft_strlen(commands[cmd_idx]) == 0)
-    {
-        free(commands[cmd_idx]);
-        commands[cmd_idx] = NULL;
-    }
-    commands[count] = NULL;
-    return (commands);
+	count = 1;
+	i = 0;
+	in_quotes = false;
+	quote_char = 0;
+	while (line[i])
+	{
+		if (is_quote(line[i]) && !in_quotes)
+		{
+			in_quotes = true;
+			quote_char = line[i];
+		}
+		else if (line[i] == quote_char && in_quotes)
+			in_quotes = false;
+		else if (line[i] == '|' && !in_quotes)
+			count++;
+		i++;
+	}
+	*cmd_count = count;
+	commands = malloc((count + 1) * sizeof(char *));
+	if (!commands)
+		return (NULL);
+	i = 0;
+	cmd_idx = 0;
+	start = 0;
+	in_quotes = false;
+	while (line[i])
+	{
+		if (is_quote(line[i]) && !in_quotes)
+		{
+			in_quotes = true;
+			quote_char = line[i];
+		}
+		else if (line[i] == quote_char && in_quotes)
+			in_quotes = false;
+		else if (line[i] == '|' && !in_quotes)
+		{
+			commands[cmd_idx] = ft_substr(line, start, i - start);
+			if (!commands[cmd_idx])
+			{
+				while (cmd_idx > 0)
+					free(commands[--cmd_idx]);
+				free(commands);
+				return (NULL);
+			}
+			cmd_idx++;
+			start = i + 1;
+		}
+		i++;
+	}
+	commands[cmd_idx] = ft_substr(line, start, i - start + 1);
+	if (!commands[cmd_idx])
+	{
+		while (cmd_idx > 0)
+			free(commands[--cmd_idx]);
+		free(commands);
+		return (NULL);
+	}
+	if (ft_strlen(commands[cmd_idx]) == 0)
+	{
+		free(commands[cmd_idx]);
+		commands[cmd_idx] = NULL;
+	}
+	commands[count] = NULL;
+	return (commands);
 }
 
-//Norme à faire
-int parse_command_line(t_pars_data *pars, char *line)
+// Norme à faire
+int	parse_command_line(t_pars_data *pars, char *line)
 {
-    char **cmd_strings;
-    int cmd_count;
-    int i;
-    t_command_data *cmd;
-    t_list *node;
+	char			**cmd_strings;
+	int				cmd_count;
+	int				i;
+	t_command_data	*cmd;
+	t_list			*node;
 
-    cmd_strings = split_by_pipes(line, &cmd_count);
-    if(!cmd_strings)
-        return(-1);
-    i = -1;
-    while ((++i) < cmd_count)
-    {
-        cmd = pars_single_command(cmd_strings[i]);
-        if (!cmd)
-        {
-            while (i >= 0)
-                free(cmd_strings[i--]);
-            free(cmd_strings);
-            return (-1);
-        }
-        node = ft_lstnew(cmd);
-        if(!node)
-        {
-            free_command_data(cmd);
-            while(i < cmd_count)
-                free(cmd_strings[i++]);
-            free(cmd_strings);
-            return (-1);
-        }
-        ft_lstadd_back(&pars->commands, node);
-        free(cmd_strings[i]);
-    }
-    free(cmd_strings);
-    return (0);
+	cmd_strings = split_by_pipes(line, &cmd_count);
+	if (!cmd_strings)
+		return (-1);
+	i = -1;
+	while ((++i) < cmd_count)
+	{
+		cmd = pars_single_command(cmd_strings[i]);
+		if (!cmd)
+		{
+			while (i >= 0)
+				free(cmd_strings[i--]);
+			free(cmd_strings);
+			return (-1);
+		}
+		node = ft_lstnew(cmd);
+		if (!node)
+		{
+			free_command_data(cmd);
+			while (i < cmd_count)
+				free(cmd_strings[i++]);
+			free(cmd_strings);
+			return (-1);
+		}
+		ft_lstadd_back(&pars->commands, node);
+		free(cmd_strings[i]);
+	}
+	free(cmd_strings);
+	return (0);
 }
 
-void free_redir(void *content)
+void	free_redir(void *content)
 {
-    t_redir *redir;
+	t_redir	*redir;
 
-    redir = (t_redir *)content;
-    if (!redir)
-        return ;
-    if (redir->file)
-        free(redir->file);
-    free(redir);
+	redir = (t_redir *)content;
+	if (!redir)
+		return ;
+	if (redir->file)
+		free(redir->file);
+	free(redir);
 }
 
-void free_command_data(void *content)
+void	free_command_data(void *content)
 {
-    t_command_data *cmd;
-    int i;
-    
-    cmd = (t_command_data *)content;
-    if (!cmd)
-        return ;
-    if (cmd->raw_args)
-    {
-        i = 0;
-        while (cmd->raw_args[i])
-            free(cmd->raw_args[i++]);
-        free(cmd->raw_args);
-    }
-    if (cmd->redir_in)
-        ft_lstclear(&cmd->redir_in, free_redir);
-    if (cmd->redir_out)
-        ft_lstclear(&cmd->redir_out, free_redir);
-    free(cmd);
+	t_command_data	*cmd;
+	int				i;
+
+	cmd = (t_command_data *)content;
+	if (!cmd)
+		return ;
+	if (cmd->raw_args)
+	{
+		i = 0;
+		while (cmd->raw_args[i])
+			free(cmd->raw_args[i++]);
+		free(cmd->raw_args);
+	}
+	if (cmd->redir_in)
+		ft_lstclear(&cmd->redir_in, free_redir);
+	if (cmd->redir_out)
+		ft_lstclear(&cmd->redir_out, free_redir);
+	free(cmd);
 }
 
-void free_pars_data(t_pars_data *pars)
+void	free_pars_data(t_pars_data *pars)
 {
-    if (!pars)
-        return ;
-    if (pars->commands)
-        ft_lstclear(&pars->commands, free_command_data);
-    free(pars);
+	if (!pars)
+		return ;
+	if (pars->commands)
+		ft_lstclear(&pars->commands, free_command_data);
+	free(pars);
 }
 
-t_pars_data *init_pars_data(char *line)
+t_pars_data	*init_pars_data(char *line)
 {
-    t_pars_data *pars;
-    
-    if (!line || !*line)
-        return (NULL);
-    if (check_syntax_errors(line))
-    {
-        g_shell.exit_status = 2;
-        return (NULL);
-    }
-    pars = malloc(sizeof(t_pars_data));
-    if (!pars)
-        return (NULL);
-    pars->commands = NULL;
-    if (parse_command_line(pars, line) == -1)
-    {
-        free_pars_data(pars);
-        return (NULL);
-    }
-    return (pars);
+	t_pars_data	*pars;
+
+	if (!line || !*line)
+		return (NULL);
+	if (check_syntax_errors(line))
+	{
+		g_shell.exit_status = 2;
+		return (NULL);
+	}
+	pars = malloc(sizeof(t_pars_data));
+	if (!pars)
+		return (NULL);
+	pars->commands = NULL;
+	if (parse_command_line(pars, line) == -1)
+	{
+		free_pars_data(pars);
+		return (NULL);
+	}
+	return (pars);
 }
