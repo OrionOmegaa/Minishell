@@ -69,40 +69,36 @@ void	ft_free_tab(char **tab)
 
 static bool path_in_args(t_cmd_data *cmd)
 {
-    bool path_in_args;
     int i;
-    int j;
 
-    path_in_args = false;
-    if (cmd->args && cmd->path)
+    if (!cmd || !cmd->args || !cmd->path)
+        return (false);
+    i = 0;
+    while (cmd->args[i])
     {
-        j = -1;
-        while (cmd->args[++j])
-        {
-            if (cmd->args[j] == cmd->path)
-            {
-                path_in_args = true;
-                break;
-            }
-        }
+        if (cmd->args[i] == cmd->path)
+            return (true);
+        i++;
     }
-    if (cmd->args)
-    {
-        i = 0;
-        while (cmd->args[++i])
-            free(cmd->args[i]);
-        free(cmd->args);
-    }
-    return (path_in_args);
+    return (false);
 }
 
 void free_cmd(t_cmd_data *cmd)
 {
+    bool in_args;
+    int  i;
+
     if (!cmd)
-        return;
-    if (cmd->args && cmd->path && cmd->args[0] == cmd->path)
-        exit(1);
-    if (cmd->path && !path_in_args())
+        return ;
+    in_args = path_in_args(cmd);
+    if (cmd->args)
+    {
+        i = 0;
+        while (cmd->args[i])
+            free(cmd->args[i++]);
+        free(cmd->args);
+    }
+    if (cmd->path && !in_args)
         free(cmd->path);
     if (cmd->fd_in > 2)
         close(cmd->fd_in);

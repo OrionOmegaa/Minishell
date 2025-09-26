@@ -6,11 +6,11 @@ CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g -lreadline
 
 #Files
 
-FILES= $(SRC_DIR)/exec/minishell.c $(SRC_DIR)/exec/exec.c $(SRC_DIR)/exec/minishell_utils.c $(SRC_DIR)/exec/exec_init.c \
+FILES= $(SRC_DIR)/exec/minishell.c $(SRC_DIR)/exec/exec_build.c $(SRC_DIR)/exec/exec_child.c $(SRC_DIR)/exec/exec_parent.c $(SRC_DIR)/exec/exec_pipeline.c $(SRC_DIR)/exec/minishell_utils.c $(SRC_DIR)/exec/exec_init.c \
 	$(SRC_DIR)/exec/open.c $(SRC_DIR)/exec/builtin.c $(SRC_DIR)/exec/builtin_utils.c $(SRC_DIR)/exec/node.c \
 	$(SRC_DIR)/pars/minishell_pars.c $(SRC_DIR)/pars/fd.c $(SRC_DIR)/pars/env_set.c $(SRC_DIR)/pars/extract_args.c \
 	$(SRC_DIR)/pars/find_path.c $(SRC_DIR)/pars/init_pars_data.c $(SRC_DIR)/pars/signal.c\
-	$(SRC_DIR)/pars/expansion.c \
+	$(SRC_DIR)/pars/expansion_env.c $(SRC_DIR)/pars/expansion_utils.c $(SRC_DIR)/pars/expansion_core.c \
 
 OBJS=$(FILES:.c=.o)
 

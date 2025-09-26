@@ -12,70 +12,74 @@
 
 #include "../../includes/minishell.h"
 
-int builtin_pwd(void)
+int	builtin_pwd(void)
 {
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
-        ft_printf("%s\n", cwd);
-        return 0;
-    }
-    perror("pwd");
-    return (1);
+	char	cwd[1024];
+
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	{
+		ft_printf("%s\n", cwd);
+		return (0);
+	}
+	perror("pwd");
+	return (1);
 }
 
-int builtin_cd(char **args, t_exe_data *exe)
+int	builtin_cd(char **args, t_exe_data *exe)
 {
-    char *path;
+	char	*path;
+	char	cwd[1024];
 
-    if (!args[1])
-        path = getenv("HOME");
-    else
-        path = args[1];
-    if (!path)
-    {
-        ft_putendl_fd("cd: HOME not set", 2);
-        return 1;
-    }
-    if (chdir(path) != 0)
-    {
-        perror("cd");
-        return 1;
-    }
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        env_set(exe->env, "PWD", cwd);
-    return 0;
+	if (!args[1])
+		path = getenv("HOME");
+	else
+		path = args[1];
+	if (!path)
+	{
+		ft_putendl_fd("cd: HOME not set", 2);
+		return (1);
+	}
+	if (chdir(path) != 0)
+	{
+		perror("cd");
+		return (1);
+	}
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+		env_set(exe->env, "PWD", cwd);
+	return (0);
 }
 
-int builtin_echo(char **args)
+int	builtin_echo(char **args)
 {
-    int i = 1;
-    bool no_newline = false;
+	int		i;
+	int		j;
+	bool	no_newline;
 
-    while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
-    {
-        int j = 1;
-        while (args[i][j] == 'n')
-            j++;
-        if (args[i][j] != '\0')
-            break;
-        no_newline = true;
-        i++;
-    }
-    while (args[i])
-    {
-        ft_printf("%s", args[i]);
-        if (args[i + 1])
-            ft_printf(" ");
-        i++;
-    }
-    if (!no_newline)
-        ft_printf("\n");
-    return 0;
+	i = 1;
+	no_newline = false;
+	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
+	{
+		j = 1;
+		while (args[i][j] == 'n')
+			j++;
+		if (args[i][j] != '\0')
+			break ;
+		no_newline = true;
+		i++;
+	}
+	while (args[i])
+	{
+		ft_printf("%s", args[i]);
+		if (args[i + 1])
+			ft_printf(" ");
+		i++;
+	}
+	if (!no_newline)
+		ft_printf("\n");
+	return (0);
 }
 
-int exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
+int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
 {
     char *builtin = cmd->args[0];
 

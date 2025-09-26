@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 13:37:49 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/08/18 10:49:40 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/09/26 12:29:14 by abonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,6 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 // Rajout pour minishell
 char	*ft_strndup(const char *s, size_t n);
-void *ft_realloc(void *ptr, size_t old_size, size_t new_size);
-char *ft_strcpy(char *dest, char *src);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+char	*ft_strcpy(char *dest, char *src);
 #endif
