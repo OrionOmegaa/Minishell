@@ -88,7 +88,6 @@ t_list	*ft_lstnew(void *content);
 t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
-// Rajout pour minishell
 char	*ft_strndup(const char *s, size_t n);
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char	*ft_strcpy(char *dest, char *src);

@@ -49,7 +49,7 @@ void	realloc_env(t_env_data **env, int len, char *key, char *value)
 		(*env)[len - 1].value = ft_strdup(value);
 }
 
-// A tester, j'ai aussi changer des trucs je suis pas certain. Leo :D
+// Needs to be tested, did some pretty heavy modifications here. Leo :D
 t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
@@ -75,7 +75,6 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 	return (env);
 }
 
-// Norme à faire
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {
 	t_env_data	*res;
