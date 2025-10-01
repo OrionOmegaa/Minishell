@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 13:40:00 by refactor          #+#    #+#             */
-/*   Updated: 2025/09/26 13:24:17 by abonnard         ###   ########.fr       */
+/*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/09/26 13:24:17 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

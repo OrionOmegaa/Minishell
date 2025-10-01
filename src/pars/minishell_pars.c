@@ -43,8 +43,7 @@ void	handle_line(char *line, t_env_data **env)
 		free_pars_data(pars);
 }
 
-// A tester, j'ai fait des modifs plutot violentes,
-// je sais pas si ca a pas casser un truc. Leo :D
+// Needs to be tested, did some pretty heavy modifications here. Leo :D
 void	minishell(t_env_data **env)
 {
 	char	*line;

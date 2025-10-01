@@ -38,18 +38,33 @@ int	env_len(t_env_data *env)
 
 void	realloc_env(t_env_data **env, int len, char *key, char *value)
 {
-	*env = ft_realloc(*env, len * sizeof(t_env_data), (len + 1)
-			* sizeof(t_env_data));
-	if (!*env)
+	t_env_data	*new_env;
+
+	new_env = malloc(sizeof(t_env_data) * (len + 2));
+	if (!new_env)
 		return ;
-	(*env)[len - 1].key = ft_strdup(key);
-	if (!value)
-		(*env)[len - 1].value = NULL;
+	ft_bzero(new_env, sizeof(t_env_data) * (len + 2));
+	if (*env)
+	{
+		len = -1;
+		while ((*env)[++len].key != NULL)
+		{
+			new_env[len].key = (*env)[len].key;
+			new_env[len].value = (*env)[len].value;
+		}
+		free(*env);
+	}
+	new_env[len].key = ft_strdup(key);
+	if (value)
+		new_env[len].value = ft_strdup(value);
 	else
-		(*env)[len - 1].value = ft_strdup(value);
+		new_env[len].value = NULL;
+	new_env[len + 1].key = NULL;
+	new_env[len + 1].value = NULL;
+	*env = new_env;
 }
 
-// A tester, j'ai aussi changer des trucs je suis pas certain. Leo :D
+// Needs to be tested, did some pretty heavy modifications here. Leo :D
 t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
@@ -67,7 +82,10 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 	if (i != -1)
 	{
 		free((*env)[i].value);
-		(*env)[i].value = ft_strdup(value);
+		if (!value)
+			(*env)[i].value = NULL;
+		else
+			(*env)[i].value = ft_strdup(value);
 		return (env);
 	}
 	len = env_len(*env);
@@ -75,7 +93,6 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 	return (env);
 }
 
-// Norme à faire
 static t_env_data	*env_copy(t_env_data *env, char *key)
 {
 	t_env_data	*res;

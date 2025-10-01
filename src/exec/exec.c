@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdescamp <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 15:46:32 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/05/08 15:46:49 by hdescamp         ###   ########.fr       */
+/*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/05/08 15:46:49 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,30 +41,30 @@ static char	**duplicate_args(char **original_args)
 	return (new_args);
 }
 
+void	open_files(t_command_data *cur, int *fd_in, int *fd_out, int *skip)
+{
+	*skip = 0;
+	*fd_in = open_infiles(cur->redir_in);
+	if (*fd_in == -1)
+		*skip = 1;
+	*fd_out = open_outfiles(cur->redir_out);
+	if (*fd_out == -1)
+		*skip = 1;
+}
+
 static t_cmd_data	*interpreter(t_pars_data *cmd)
 {
 	t_cmd_data		*cmds;
-	t_list			*lst;
 	t_command_data	*cur;
-	int				skip;
-	int				fd_in;
-	int				fd_out;
+	int				fds_and_skip[3];
 	char			**args;
 	char			*path;
-	t_cmd_data		*node;
 
 	cmds = NULL;
-	lst = cmd->commands;
-	while (lst)
+	cur = cmd->commands->content;
+	while (cur)
 	{
-		cur = (t_command_data *)lst->content;
-		skip = 0;
-		fd_in = open_infiles(cur->redir_in);
-		if (fd_in == -1)
-			skip = 1;
-		fd_out = open_outfiles(cur->redir_out);
-		if (fd_out == -1)
-			skip = 1;
+		open_files(cur, &fds_and_skip[0], &fds_and_skip[1], &fds_and_skip[2]);
 		if (!skip)
 		{
 			args = duplicate_args(cur->raw_args);
@@ -75,7 +75,7 @@ static t_cmd_data	*interpreter(t_pars_data *cmd)
 			node = cmd_new(args, path, fd_in, fd_out);
 			cmd_add_back(&cmds, node);
 		}
-		lst = lst->next;
+		cur = cur->next;
 	}
 	return (cmds);
 }

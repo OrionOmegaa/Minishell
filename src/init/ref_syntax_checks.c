@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ref_syntax_checks.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 21:55:02 by abonnard          #+#    #+#             */
-/*   Updated: 2025/09/26 21:36:32 by abonnard         ###   ########.fr       */
+/*   Created: 2025/09/26 21:55:02 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/09/26 21:36:32 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

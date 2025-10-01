@@ -20,6 +20,9 @@ void	handle_signal(int sig)
 	{
 		g_shell.signal_received = SIGINT;
 		write(STDOUT_FILENO, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
 	else if (sig == SIGTERM)
 		g_shell.signal_received = SIGTERM;

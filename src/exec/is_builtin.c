@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_builtin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 20:51:36 by abonnard          #+#    #+#             */
-/*   Updated: 2025/09/26 20:55:25 by abonnard         ###   ########.fr       */
+/*   Created: 2025/09/26 20:51:36 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/09/26 20:55:25 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

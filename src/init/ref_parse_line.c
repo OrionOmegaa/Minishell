@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ref_parse_line.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 21:22:45 by abonnard          #+#    #+#             */
-/*   Updated: 2025/09/26 21:23:23 by abonnard         ###   ########.fr       */
+/*   Created: 2025/09/26 21:22:45 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/09/26 21:23:23 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
