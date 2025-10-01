@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by hdescamp          #+#    #+#             */
-/*   Updated: 2025/09/26 23:04:42 by abonnard         ###   ########.fr       */
+/*   Updated: 2025/10/01 18:26:14 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,7 @@ t_env_data					**env_set(t_env_data **env, char *key, char *value);
 t_env_data					**env_unset(t_env_data **env, char *key);
 char						*find_path(const char *cmd);
 int							ft_isspace(char c);
+int							is_syntax(char c);
 int							is_quote(char c);
 
 /* ********************* PARSER LOW LEVEL HELPERS ************************* */

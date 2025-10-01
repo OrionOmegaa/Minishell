@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 11:29:20 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/25 16:28:46 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/01 19:35:00 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@ void	handle_signal(int sig)
 	{
 		g_shell.signal_received = SIGINT;
 		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
 	}
 	else if (sig == SIGTERM)
 		g_shell.signal_received = SIGTERM;
@@ -30,7 +27,7 @@ void	handle_signal(int sig)
 
 void	init_signals(void)
 {
-	rl_catch_signals = 0;
+	rl_catch_signals = 1;
 	rl_catch_sigwinch = 0;
 	signal(SIGINT, handle_signal);
 	signal(SIGTERM, handle_signal);

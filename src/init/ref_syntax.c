@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ref_syntax.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:23:38 by abonnard          #+#    #+#             */
-/*   Updated: 2025/09/26 23:03:12 by abonnard         ###   ########.fr       */
+/*   Updated: 2025/10/01 18:40:13 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ static int	redir_edge(char *t, int len)
 {
 	if (t[0] == '>' || t[0] == '<')
 	{
-		redir_pair_or_single(t, (t[1] == '>' || t[1] == '<'));
+		if ((len - 2) < 1)
+			printf("bash: syntax error near unexpected token `newline'\n");
+		else
+			redir_pair_or_single(t, (t[1] == '>' || t[1] == '<'));
 		g_shell.exit_status = 2;
 		return (1);
 	}
