@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ref_split_pipes_utils.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abonnard <abonnard@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 21:42:11 by abonnard          #+#    #+#             */
-/*   Updated: 2025/09/26 23:00:50 by abonnard         ###   ########.fr       */
+/*   Created: 2025/09/26 21:42:11 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/09/26 23:00:50 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
