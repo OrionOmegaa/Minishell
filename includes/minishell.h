@@ -199,7 +199,7 @@ int							count_segments(char *line);
 int							iterate_segments(char *line, char **cmds);
 void						update_quote(char c, bool *in_q, char *q);
 int							iterate_segments_body(char *line, char **cmds);
-int						final_syntax_check(char *trim, int len);
-void					print_redir_pair(char a, char b);
-bool					is_commands(char *line, int i);
+int							final_syntax_check(char *trim, int len);
+void						print_redir_pair(char a, char b);
+bool						is_commands(char *line, int i);
 #endif
