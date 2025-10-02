@@ -3,41 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/05/08 15:46:49 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:21:38 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	count_args(char *input)
-{
-	int	count;
-	int	in_word;
-
-	count = 0;
-	in_word = 0;
-	while (*input)
-	{
-		if (*input == ' ' || *input == '\t')
-			in_word = 0;
-		else if (!in_word)
-		{
-			count++;
-			in_word = 1;
-		}
-		input++;
-	}
-	return (count);
-}
-
-void	exit_with_error(const char *msg, int code)
-{
-	perror(msg);
-	exit(code);
-}
 
 void	free_env_data(t_env_data *env)
 {

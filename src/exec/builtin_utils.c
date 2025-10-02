@@ -6,30 +6,32 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 14:35:13 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:15:45 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void    sort_env(t_env_data **env)
+void	sort_env(t_env_data **env)
 {
-    int   i;
-    int   j;
-    t_env_data  tmp;
+	int			i;
+	int			j;
+	t_env_data	tmp;
 
-    for (i = 0; (*env)[i].key != NULL; i++)
-    {
-        for (j = i + 1; (*env)[j].key != NULL; j++)
-        {
-            if (ft_strncmp((*env)[i].key, (*env)[j].key, ft_strlen((*env)[i].key)) > 0)
-            {
-                tmp = (*env)[i];
-                (*env)[i] = (*env)[j];
-                (*env)[j] = tmp;
-            }
-        }
-    }
+	i = -1;
+	while ((*env)[++i].key != NULL)
+	{
+		j = i;
+		while ((*env)[++j].key != NULL)
+		{
+			tmp = (*env)[i];
+			if (ft_strncmp(tmp.key, (*env)[j].key, ft_strlen(tmp.key)) > 0)
+			{
+				(*env)[i] = (*env)[j];
+				(*env)[j] = tmp;
+			}
+		}
+	}
 }
 
 static void	export_second(char *arg, t_exe_data *exe)
@@ -110,13 +112,4 @@ int	builtin_env(t_exe_data *exe)
 		if ((*exe->env)[i].value)
 			printf("%s=%s\n", (*exe->env)[i].key, (*exe->env)[i].value);
 	return (0);
-}
-
-int	builtin_exit(char **args)
-{
-	g_shell.exit_status = 0;
-	if (args[1])
-		g_shell.exit_status = ft_atoi(args[1]);
-	g_shell.running = 0;
-	return (g_shell.exit_status);
 }

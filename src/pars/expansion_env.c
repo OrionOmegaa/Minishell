@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 13:24:17 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:23:38 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	get_var_name_len(char *str)
 	len = 0;
 	if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
 		return (0);
-	while (str[len] && (ft_isalnum(str[len]) || str[len] == '_'))
+	while (str[len] && str[len] != '\x02' &&
+		(ft_isalnum(str[len]) || str[len] == '_'))
 		len++;
 	return (len);
 }

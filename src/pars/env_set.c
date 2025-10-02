@@ -6,35 +6,11 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 14:22:59 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:42:45 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	is_known(t_env_data **env, char *key)
-{
-	int	i;
-
-	i = -1;
-	while ((*env)[++i].key != NULL)
-	{
-		if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) == 0
-			&& ft_strlen((*env)[i].key) == ft_strlen(key))
-			return (i);
-	}
-	return (-1);
-}
-
-int	env_len(t_env_data *env)
-{
-	int	len;
-
-	len = 0;
-	while (env[len].key != NULL)
-		len++;
-	return (len);
-}
 
 void	realloc_env(t_env_data **env, int len, char *key, char *value)
 {
@@ -64,7 +40,6 @@ void	realloc_env(t_env_data **env, int len, char *key, char *value)
 	*env = new_env;
 }
 
-// Needs to be tested, did some pretty heavy modifications here. Leo :D
 t_env_data	**env_set(t_env_data **env, char *key, char *value)
 {
 	int	i;
@@ -96,15 +71,15 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 static void	env_copy(t_env_data **env, char *key, int len, int i)
 {
 	t_env_data	*res;
-	
+
 	res = malloc(sizeof(t_env_data) * (len + 1));
 	if (!res || !*env)
 		return ;
 	ft_bzero(res, sizeof(t_env_data) * (len + 1));
 	len = 0;
-	while((*env)[++i].key != NULL)
+	while ((*env)[++i].key != NULL)
 	{
-		if(ft_strncmp((*env)[i].key, key, ft_strlen(key)) != 0)
+		if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) != 0)
 		{
 			res[len].key = (*env)[i].key;
 			res[len++].value = (*env)[i].value;

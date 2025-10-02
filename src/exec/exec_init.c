@@ -6,19 +6,19 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 15:33:12 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:17:44 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char **init_envp(t_env_data *env)
+char	**init_envp(t_env_data *env)
 {
-	char **envp;
-	char *value;
-	int i;
-	int len;
-	
+	char	**envp;
+	char	*value;
+	int		i;
+	int		len;
+
 	if (!env)
 		return (NULL);
 	envp = malloc(sizeof(char *) * (env_len(env)+ 1));

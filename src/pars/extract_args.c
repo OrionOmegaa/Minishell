@@ -6,50 +6,11 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:52:47 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/07/14 18:52:47 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:33:14 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
-		|| c == '\v');
-}
-
-int	is_quote(char c)
-{
-	return (c == '"' || c == 39);
-}
-
-static int	pars_count_args(const char *str, int count)
-{
-	bool	in_word;
-	bool	in_quotes;
-	char	quote_char;
-
-	in_word = false;
-	in_quotes = false;
-	while (*str)
-	{
-		if (is_quote(*str) && !in_quotes)
-		{
-			in_quotes = true;
-			quote_char = *str;
-			if (!in_word && ++count)
-				in_word = true;
-		}
-		else if (*str == quote_char && in_quotes)
-			in_quotes = false;
-		else if (ft_isspace(*str) && !in_quotes)
-			in_word = false;
-		else if (!in_word && ++count)
-			in_word = true;
-		str++;
-	}
-	return (count);
-}
 
 static void	skip_to_arg_end(const char **str, int *in_quotes, char *quote_char)
 {
@@ -66,7 +27,7 @@ static void	skip_to_arg_end(const char **str, int *in_quotes, char *quote_char)
 	}
 }
 
-// Uncommented 2 blocks, don't know if that was the thing to do
+/*// Uncommented 2 blocks, don't know if that was the thing to do
 static void	handle_quote_state(const char *s, bool *in_quotes, char *quote_char,
 		int *i)
 {
@@ -83,9 +44,9 @@ static void	handle_quote_state(const char *s, bool *in_quotes, char *quote_char,
 		if (!ft_isspace(s[(*i) + 1]))
 			(*i)++;
 	}
-}
+}*/
 
-static char	*copy_arg_content(const char *start, int len)
+/*static char	*copy_arg_content(const char *start, int len)
 {
 	char	*result;
 	int		i;
@@ -102,12 +63,74 @@ static char	*copy_arg_content(const char *start, int len)
 	while (i < len)
 	{
 		handle_quote_state(start, &in_quotes, &quote_char, &i);
+		//added
+		if (start[i] == '$' && i + 1 < len && is_quote(start[i + 1]))
+		{
+			i++;
+			continue;
+		}
 		if (!is_quote(start[i]) || (in_quotes && start[i] != quote_char))
 			result[j++] = start[i];
 		i++;
 	}
 	result[j] = '\0';
 	return (result);
+}*/
+
+static void process_char(const char *start, int len, char *result, 
+                         int *i, int *j, bool *in_sq, bool *in_dq)
+{
+    if (start[*i] == '\'' && !(*in_dq))
+    {
+        *in_sq = !(*in_sq);
+        (*i)++;
+        if (!(*in_sq))
+            result[(*j)++] = '\x02';
+        return;
+    }
+    if (start[*i] == '"' && !(*in_sq))
+    {
+        *in_dq = !(*in_dq);
+        (*i)++;
+        if (!(*in_dq))
+            result[(*j)++] = '\x02';
+        return;
+    }
+    if (start[*i] == '$' && *in_sq)
+    {
+        result[(*j)++] = '\x01';
+        (*i)++;
+        return;
+    }
+    if (start[*i] == '$' && !(*in_sq) && !(*in_dq) &&
+        *i + 1 < len && 
+        (start[*i + 1] == '"' || start[*i + 1] == '\''))
+    {
+        (*i)++;
+        return;
+    }
+    result[(*j)++] = start[(*i)++];
+}
+
+static char	*copy_arg_content(const char *start, int len)
+{
+	char	*res;
+	int		i;
+	int		j;
+	bool	in_sq;
+	bool	in_dq;
+	
+	res = (char *)malloc(sizeof(char) * (len + 1));
+	if (!res)
+		return (NULL);
+	i = 0;
+	j = 0;
+	in_sq = false;
+	in_dq = false;
+	while (i < len)
+		process_char(start, len, res, &i, &j, &in_sq, &in_dq);
+	res[j] = '\0';
+	return (res);
 }
 
 static char	*extract_one_arg(const char **str)
@@ -129,17 +152,6 @@ static char	*extract_one_arg(const char **str)
 	return (copy_arg_content(start, len));
 }
 
-static char	**free_args_on_error(char **args, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count)
-		free(args[i++]);
-	free(args);
-	return (NULL);
-}
-
 char	**extract_args(const char *raw_args)
 {
 	char		**args;
@@ -149,6 +161,7 @@ char	**extract_args(const char *raw_args)
 
 	if (!raw_args)
 		return (NULL);
+	printf("raw_args = [%s]\n", raw_args);
 	argc = pars_count_args(raw_args, 0);
 	if (argc == 0)
 		return (NULL);
@@ -162,6 +175,7 @@ char	**extract_args(const char *raw_args)
 		args[i] = extract_one_arg(&current);
 		if (!args[i])
 			return (free_args_on_error(args, i));
+		printf("args[%d] = [%s]\n", i, args[i]);
 	}
 	args[i] = NULL;
 	return (args);

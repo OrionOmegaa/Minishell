@@ -6,11 +6,20 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 20:52:04 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:15:51 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	builtin_exit(char **args)
+{
+	g_shell.exit_status = 0;
+	if (args[1])
+		g_shell.exit_status = ft_atoi(args[1]);
+	g_shell.running = 0;
+	return (g_shell.exit_status);
+}
 
 int	builtin_pwd(void)
 {

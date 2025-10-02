@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 15:13:31 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:31:11 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,8 @@ void						free_redir(void *content);
 void						free_command_data(void *content);
 void						free_pars_data(t_pars_data *pars);
 t_pars_data					*init_pars_data(char *line);
+char						**free_args_on_error(char **args, int count);
+int							pars_count_args(const char *str, int count);
 
 /* ******************************* MISC HELPERS **************************** */
 void						init_signals(void);

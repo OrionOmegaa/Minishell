@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 11:29:20 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/01 19:35:00 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:29:55 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	handle_signal(int sig)
 void	init_signals(void)
 {
 	rl_catch_signals = 1;
-	rl_catch_sigwinch = 0;
+	rl_catch_sigwinch = 1;
 	signal(SIGINT, handle_signal);
 	signal(SIGTERM, handle_signal);
 	signal(SIGQUIT, SIG_IGN);
