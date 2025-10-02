@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:01 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 20:57:18 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 15:44:19 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ int	executor(t_env_data **env, t_pars_data *pars)
 
 	exe = init_exe(env, pars);
 	execute_pipeline(&exe, exe.pars);
-	free_exe(&exe, 0, 0, NULL);
+	free_exe(&exe, 0, 1, NULL);
 	return (0);
 }

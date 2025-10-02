@@ -24,7 +24,7 @@ SRC_DIR=src
 
 #Includes
 
-NAME=Minishell
+NAME=minishell
 LIBFT=./includes/libft/libft.a
 
 #Decoration

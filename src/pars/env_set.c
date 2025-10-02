@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 09:37:32 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 14:22:59 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,46 +93,42 @@ t_env_data	**env_set(t_env_data **env, char *key, char *value)
 	return (env);
 }
 
-static t_env_data	*env_copy(t_env_data *env, char *key)
+static void	env_copy(t_env_data **env, char *key, int len, int i)
 {
 	t_env_data	*res;
-	int			i;
-	int			j;
-
-	res = malloc(sizeof(t_env_data) * (env_len(env)));
-	if (!res)
-		return (NULL);
-	i = -1;
-	j = 0;
-	while (env[++i].key != NULL)
+	
+	res = malloc(sizeof(t_env_data) * (len + 1));
+	if (!res || !*env)
+		return ;
+	ft_bzero(res, sizeof(t_env_data) * (len + 1));
+	len = 0;
+	while((*env)[++i].key != NULL)
 	{
-		if (ft_strncmp(env[i].key, key, ft_strlen(key)) != 0
-			|| ft_strlen(env[i].key) != ft_strlen(key))
+		if(ft_strncmp((*env)[i].key, key, ft_strlen(key)) != 0)
 		{
-			res[j].key = env[i].key;
-			res[j++].value = env[i].value;
+			res[len].key = (*env)[i].key;
+			res[len++].value = (*env)[i].value;
 		}
 		else
 		{
-			free(env[i].key);
-			free(env[i].value);
+			free((*env)[i].key);
+			free((*env)[i].value);
 		}
 	}
-	return (res);
+	res[len].key = NULL;
+	res[len].value = NULL;
+	free(*env);
+	(*env) = res;
 }
 
 t_env_data	**env_unset(t_env_data **env, char *key)
 {
-	t_env_data	*res;
-
 	if (!env || !*env || !key)
 		return (NULL);
 	if (is_known(env, key) == -1)
 		return (NULL);
-	res = env_copy(*env, key);
-	if (!res)
+	env_copy(env, key, env_len(*env), -1);
+	if (!env)
 		return (NULL);
-	free(*env);
-	*env = res;
 	return (env);
 }

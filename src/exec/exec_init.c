@@ -3,14 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   exec_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/05/08 15:46:49 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 15:33:12 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char **init_envp(t_env_data *env)
+{
+	char **envp;
+	char *value;
+	int i;
+	int len;
+	
+	if (!env)
+		return (NULL);
+	envp = malloc(sizeof(char *) * (env_len(env)+ 1));
+	if (!envp)
+		return (NULL);
+	i = -1;
+	while (env[++i].key != NULL)
+	{
+		len = ft_strlen(env[i].key);
+		value = env[i].value;
+		envp[i] = malloc(len + ft_strlen(value) + 2);
+		if (!envp[i])
+			return (NULL);
+		ft_strlcpy(envp[i], env[i].key, len);
+		envp[i][len] = '=';
+		ft_strlcpy(envp[i] + len + 1, value, ft_strlen(value));
+	}
+	envp[i] = NULL;
+	return (envp);
+}
 
 t_exe_data	init_exe(t_env_data **env, t_pars_data *pars)
 {
@@ -20,6 +48,7 @@ t_exe_data	init_exe(t_env_data **env, t_pars_data *pars)
 	exe.pars = pars;
 	exe.prev_pipe = -1;
 	exe.cmds = NULL;
+	exe.envp = init_envp(*env);
 	return (exe);
 }
 

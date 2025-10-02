@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/05/08 15:46:49 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 14:35:13 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void    sort_env(t_env_data **env)
+{
+    int   i;
+    int   j;
+    t_env_data  tmp;
+
+    for (i = 0; (*env)[i].key != NULL; i++)
+    {
+        for (j = i + 1; (*env)[j].key != NULL; j++)
+        {
+            if (ft_strncmp((*env)[i].key, (*env)[j].key, ft_strlen((*env)[i].key)) > 0)
+            {
+                tmp = (*env)[i];
+                (*env)[i] = (*env)[j];
+                (*env)[j] = tmp;
+            }
+        }
+    }
+}
 
 static void	export_second(char *arg, t_exe_data *exe)
 {
@@ -26,7 +46,7 @@ static void	export_second(char *arg, t_exe_data *exe)
 		value = equal_sign + 1;
 		if (key_len >= sizeof(key))
 		{
-			ft_printf("export: variable name too long\n");
+			printf("export: variable name too long\n");
 			return ;
 		}
 		ft_memcpy(key, arg, key_len);
@@ -35,6 +55,7 @@ static void	export_second(char *arg, t_exe_data *exe)
 	}
 	else
 		env_set(exe->env, arg, NULL);
+	sort_env(exe->env);
 	return ;
 }
 
@@ -46,14 +67,15 @@ int	builtin_export(char **args, t_exe_data *exe)
 	i = 0;
 	if (!args[1])
 	{
+		sort_env(exe->env);
 		j = -1;
 		while ((*exe->env)[++j].key != NULL)
 		{
 			if ((*exe->env)[j].value)
-				ft_printf("declare -x %s=\"%s\"\n", (*exe->env)[j].key,
+				printf("declare -x %s=\"%s\"\n", (*exe->env)[j].key,
 					(*exe->env)[j].value);
 			else
-				ft_printf("declare -x %s\n", (*exe->env)[j].key);
+				printf("declare -x %s\n", (*exe->env)[j].key);
 		}
 		return (0);
 	}
@@ -86,7 +108,7 @@ int	builtin_env(t_exe_data *exe)
 		return (1);
 	while ((*exe->env)[++i].key != NULL)
 		if ((*exe->env)[i].value)
-			ft_printf("%s=%s\n", (*exe->env)[i].key, (*exe->env)[i].value);
+			printf("%s=%s\n", (*exe->env)[i].key, (*exe->env)[i].value);
 	return (0);
 }
 

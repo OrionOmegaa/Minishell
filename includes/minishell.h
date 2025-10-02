@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/01 18:26:14 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/02 15:13:31 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,6 @@ typedef struct s_redir
 	int						append;
 	int						here_doc;
 }							t_redir;
-
-typedef struct s_exec_data
-{
-}							t_exec_data;
 
 typedef struct s_exe_data
 {
