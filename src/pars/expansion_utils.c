@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 15:32:24 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 17:08:26 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,66 +90,6 @@ static void	expand_var(struct s_expand_ctx *c)
 		c->j += (int)vlen;
 	}
 	c->i += len;
-}
-
-static void bluff(char **start)
-{
-	char* answer;
-	int i;
-	int j;
-	int len;
-	bool insquote;
-	bool indquote;
-
-	indquote = false;
-	insquote = false;
-	i = 0;
-	j = 0;
-	len = ft_strlen(*start) + 1;
-	answer = (char *) malloc(sizeof(char) * len);
-	while (j < len && (*start)[j])
-	{
-		if ((*start)[j] == '"' && !insquote)
-		{
-			indquote = !indquote;
-			j++;
-			continue;
-		}
-		if ((*start)[j] == '\'' && !indquote)
-		{
-			insquote = !insquote;
-			j++;
-			continue;
-		}
-		answer[i++] = (*start)[j++];
-	}
-	answer[i] = '\0';
-	if (*start)
-		free(*start);
-	(*start) = answer;
-}
-
-bool	need_expand(char *s, int len)
-{
-	bool sq;
-	bool dq;
-	int i;
-
-	if (s[len] != '$' || !s[len + 1])
-		return (false);
-	sq = false;
-	dq = false;
-	i = -1;
-	while ((++i) < len)
-	{
-		if (s[i] == '\'')
-			if (!dq)
-				sq = !sq;
-		if (s[i] == '"')
-			if (!sq)
-				dq = !dq;
-	}
-	return (sq);
 }
 
 void	expand_core(struct s_expand_ctx *c)

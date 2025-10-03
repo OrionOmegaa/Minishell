@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 20:24:25 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 17:12:11 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,29 @@ void	expand_args_array(char **args, t_env_data **env)
 			args[i] = expanded;
 		}
 	}
+}
+
+/*util of expand_core*/
+
+bool	need_expand(char *s, int len)
+{
+	bool	sq;
+	bool	dq;
+	int		i;
+
+	if (s[len] != '$' || !s[len + 1])
+		return (false);
+	sq = false;
+	dq = false;
+	i = -1;
+	while ((++i) < len)
+	{
+		if (s[i] == '\'')
+			if (!dq)
+				sq = !sq;
+		if (s[i] == '"')
+			if (!sq)
+				dq = !dq;
+	}
+	return (sq);
 }
