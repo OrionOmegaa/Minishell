@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 21:32:27 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 09:20:25 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,39 +92,18 @@ static void	expand_var(struct s_expand_ctx *c)
 	c->i += len;
 }
 
-void expand_core(struct s_expand_ctx *c)
-{
-    while (c->input[c->i])
-    {
-        if (c->input[c->i] == '\x01')
-        {
-            c->res[c->j++] = '$';
-            c->i++;
-        }
-        else if (c->input[c->i] == '\x02')
-            c->i++;
-        else if (c->input[c->i] == '$' && c->input[c->i + 1])
-        {
-            c->i++;
-            if (!expand_special(c))
-                expand_var(c);
-        }
-        else if (c->input[c->i] == '\\' && c->input[c->i + 1] == '$')
-        {
-            c->res[c->j++] = '$';
-            c->i += 2;
-        }
-        else
-            c->res[c->j++] = c->input[c->i++];
-    }
-    c->res[c->j] = '\0';
-}
-
-/*void	expand_core(struct s_expand_ctx *c)
+void	expand_core(struct s_expand_ctx *c)
 {
 	while (c->input[c->i])
 	{
-		if (c->input[c->i] == '$' && c->input[c->i + 1])
+		if (c->input[c->i] == '\x01')
+		{
+			c->res[c->j++] = '$';
+			c->i++;
+		}
+		else if (c->input[c->i] == '\x02')
+			c->i++;
+		else if (c->input[c->i] == '$' && c->input[c->i + 1])
 		{
 			c->i++;
 			if (!expand_special(c))
@@ -139,4 +118,4 @@ void expand_core(struct s_expand_ctx *c)
 			c->res[c->j++] = c->input[c->i++];
 	}
 	c->res[c->j] = '\0';
-}*/
+}
