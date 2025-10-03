@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:23:24 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 21:32:37 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 16:46:47 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,21 @@
 
 int	psc_handle_redir(char *s, int i, t_command_data *cmd);
 int	psc_copy_plain(char *src, char *dst, int i, int *j);
+
+static int	psc_handle_quotes(char *src, char *dest, int i, int *j)
+{
+	char quotes;
+
+	quotes = src[i];
+	while (src[++i])
+	{
+		if (src[i] == quotes)
+			return (i + 1);
+		dest[*j] = src[i];
+		(*j)++;
+	}
+	return (i);
+}
 
 static void	fill_clean(char *src, char *clean, t_command_data *cmd)
 {
@@ -24,7 +39,9 @@ static void	fill_clean(char *src, char *clean, t_command_data *cmd)
 	j = 0;
 	while (src[i])
 	{
-		if (src[i] == '<' || src[i] == '>')
+		if (is_quote(src[i]))
+			i = psc_handle_quotes(src, clean, i, &j);
+		else if (src[i] == '<' || src[i] == '>')
 			i = psc_handle_redir(src, i, cmd);
 		else
 			i = psc_copy_plain(src, clean, i, &j);

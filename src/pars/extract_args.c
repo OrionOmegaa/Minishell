@@ -6,23 +6,34 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:52:47 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 15:45:06 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 16:25:56 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	skip_to_arg_end(const char **str, int *in_quotes, char *quote_char)
+static void	skip_to_arg_end(const char **str, bool *in_quotes, char *quote_char)
 {
-	while (**str && (!ft_isspace(**str) || *in_quotes))
+	if (is_quote(**str))
 	{
-		if (is_quote(**str) && !*in_quotes)
+		*in_quotes = true;
+		*quote_char = (**str);
+		(*str)++;
+	}
+	while (**str)
+	{
+		if (is_quote(**str))
 		{
-			*in_quotes = 1;
-			*quote_char = **str;
+			if (*in_quotes && *quote_char == **str)
+				*in_quotes = !(*in_quotes);
+			else if (!(*in_quotes)) 
+			{
+				*quote_char = **str;
+				*in_quotes = !(*in_quotes);
+			}
 		}
-		else if (**str == *quote_char && *in_quotes)
-			*in_quotes = 0;
+		else if (!(*in_quotes) && ft_isspace(**str))
+			break;
 		(*str)++;
 	}
 }
@@ -33,7 +44,7 @@ static char	*extract_one_arg(const char **str)
 {
 	const char	*start;
 	int			len;
-	int			in_quotes;
+	bool		in_quotes;
 	char		quote_char;
 
 	while (**str && ft_isspace(**str))
