@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:52:47 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 08:43:38 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 15:45:06 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ char	**extract_args(const char *raw_args)
 
 	if (!raw_args)
 		return (NULL);
-	printf("raw_args = [%s]\n", raw_args);
 	argc = pars_count_args(raw_args, 0);
 	if (argc == 0)
 		return (NULL);
@@ -71,7 +70,6 @@ char	**extract_args(const char *raw_args)
 		args[i] = extract_one_arg(&current);
 		if (!args[i])
 			return (free_args_on_error(args, i));
-		printf("args[%d] = [%s]\n", i, args[i]);
 	}
 	args[i] = NULL;
 	return (args);

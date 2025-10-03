@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 08:43:04 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 09:16:17 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:47:05 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,13 @@ char	*copy_arg_content(const char *start, int len)
 	j = 0;
 	sq = false;
 	dq = false;
-	while ((++i) < len)
+	while ((++i) < len && j < len)
 	{
 		if (change_quote(start[i], &sq, &dq))
 			res[j++] = '\x02';
-		else if (start[i] == '$' && sq)
+		if (start[i] == '$' && sq)
 			res[j++] = '\x01';
-		else if (start[i] == '$' && c(sq, dq, i, len) && is_quote(start[i + 1]))
+		if (start[i] == '$' && c(sq, dq, i, len) && is_quote(start[i + 1]))
 			continue ;
 		else
 			res[j++] = start[i];

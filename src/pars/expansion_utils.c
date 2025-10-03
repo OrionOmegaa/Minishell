@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 09:20:25 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 15:32:24 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,75 @@ static void	expand_var(struct s_expand_ctx *c)
 	c->i += len;
 }
 
+static void bluff(char **start)
+{
+	char* answer;
+	int i;
+	int j;
+	int len;
+	bool insquote;
+	bool indquote;
+
+	indquote = false;
+	insquote = false;
+	i = 0;
+	j = 0;
+	len = ft_strlen(*start) + 1;
+	answer = (char *) malloc(sizeof(char) * len);
+	while (j < len && (*start)[j])
+	{
+		if ((*start)[j] == '"' && !insquote)
+		{
+			indquote = !indquote;
+			j++;
+			continue;
+		}
+		if ((*start)[j] == '\'' && !indquote)
+		{
+			insquote = !insquote;
+			j++;
+			continue;
+		}
+		answer[i++] = (*start)[j++];
+	}
+	answer[i] = '\0';
+	if (*start)
+		free(*start);
+	(*start) = answer;
+}
+
+bool	need_expand(char *s, int len)
+{
+	bool sq;
+	bool dq;
+	int i;
+
+	if (s[len] != '$' || !s[len + 1])
+		return (false);
+	sq = false;
+	dq = false;
+	i = -1;
+	while ((++i) < len)
+	{
+		if (s[i] == '\'')
+			if (!dq)
+				sq = !sq;
+		if (s[i] == '"')
+			if (!sq)
+				dq = !dq;
+	}
+	return (sq);
+}
+
 void	expand_core(struct s_expand_ctx *c)
 {
 	while (c->input[c->i])
 	{
 		if (c->input[c->i] == '\x01')
-		{
-			c->res[c->j++] = '$';
 			c->i++;
-		}
 		else if (c->input[c->i] == '\x02')
 			c->i++;
-		else if (c->input[c->i] == '$' && c->input[c->i + 1])
+		else if (c->input[c->i] == '$' && !need_expand(c->input, c->i))
 		{
 			c->i++;
 			if (!expand_special(c))
@@ -118,4 +175,5 @@ void	expand_core(struct s_expand_ctx *c)
 			c->res[c->j++] = c->input[c->i++];
 	}
 	c->res[c->j] = '\0';
+	bluff(&(c->res));
 }

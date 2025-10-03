@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 09:40:27 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/03 09:28:06 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ void	handle_line(char *line, t_env_data **env)
 		free_pars_data(pars);
 }
 
-// Needs to be tested, did some pretty heavy modifications here. Leo :D
 void	minishell(t_env_data **env)
 {
 	char	*line;
