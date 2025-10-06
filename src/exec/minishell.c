@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 19:41:12 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:41:46 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,19 @@
 
 int	main(int ac, char **av, char **envp)
 {
+	t_shell	my_shell;
+
 	if (ac != 1 && av)
 		return (ft_printf("Wrong Number Of Argument\nUse : ./Minishell\n"));
-	g_shell.env = init_env(envp);
-	if (!g_shell.env)
+	my_shell.env = init_env(envp);
+	if (!my_shell.env)
 		return (1);
-	g_shell.running = 1;
+	my_shell.running = 1;
 	g_shell.signal_received = 0;
 	init_signals();
-	minishell(g_shell.env);
+	minishell(&my_shell);
 	cleanup_shell();
-	exit(g_shell.exit_status);
+	exit(my_shell.exit_status);
 }
 
 /* UTILS */

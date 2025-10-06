@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:55:02 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 21:36:32 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:43:25 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ void	print_redir_pair(char a, char b)
 	printf("%c' \n", b);
 }
 
-static void	pipe_err(int dbl)
+static void	pipe_err(int dbl, t_shell *my_shell)
 {
 	if (dbl)
 		printf("bash: syntax error near unexpected token `||'\n");
 	else
 		printf("bash: syntax error near unexpected token `|'\n");
-	g_shell.exit_status = 2;
+	(*my_shell).exit_status = 2;
 }
 
-static int	check_body(char *trim)
+static int	check_body(char *trim, t_shell *my_shell)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ static int	check_body(char *trim)
 				pipe_err(1);
 			else if (!is_commands(trim, i + 2))
 				pipe_err(0);
-			if (g_shell.exit_status == 2)
+			if ((*my_shell).exit_status == 2)
 				return (1);
 		}
 		i++;
@@ -48,9 +48,9 @@ static int	check_body(char *trim)
 	return (0);
 }
 
-int	final_syntax_check(char *trim, int len)
+int	final_syntax_check(char *trim, int len, t_shell *my_shell)
 {
-	if (check_body(trim))
+	if (check_body(trim, (*)))
 		return (1);
 	if (len > 0)
 		return (0);

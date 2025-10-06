@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_build.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <mpoirier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 17:30:00 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:37:23 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static char	**duplicate_args(char **src)
 	return (dst);
 }
 
-static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out)
+static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out, t_shell *my_shell)
 {
 	char		**args;
 	char		*path;
@@ -50,7 +50,7 @@ static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out)
 	args = duplicate_args(cur->raw_args);
 	if (!args)
 		return (NULL);
-	expand_args_array(args, g_shell.env);
+	expand_args_array(args, (*my_shell).env);
 	path = find_path(args[0]);
 	if (!path)
 		path = ft_strdup(args[0]);
@@ -68,7 +68,7 @@ void	open_files(t_command_data *cur, int *fd_in, int *fd_out, int *skip)
 		*skip = 1;
 }
 
-t_cmd_data	*interpreter(t_pars_data *pars)
+t_cmd_data	*interpreter(t_pars_data *pars, t_shell *my_shell)
 {
 	t_list			*lst;
 	t_command_data	*cur;
@@ -85,7 +85,7 @@ t_cmd_data	*interpreter(t_pars_data *pars)
 		open_files(cur, &fds_and_skip[0], &fds_and_skip[1], &fds_and_skip[2]);
 		if (!fds_and_skip[2])
 		{
-			node = build_cmd_node(cur, fds_and_skip[0], fds_and_skip[1]);
+			node = build_cmd_node(cur, fds_and_skip[0], fds_and_skip[1], my_shell);
 			if (node)
 				cmd_add_back(&cmds, node);
 		}

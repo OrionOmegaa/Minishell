@@ -6,19 +6,19 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 19:15:51 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:36:16 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	builtin_exit(char **args)
+int	builtin_exit(char **args, t_shell *my_shell)
 {
-	g_shell.exit_status = 0;
+	(*my_shell).exit_status = 0;
 	if (args[1])
-		g_shell.exit_status = ft_atoi(args[1]);
-	g_shell.running = 0;
-	return (g_shell.exit_status);
+		(*my_shell).exit_status = ft_atoi(args[1]);
+	(*my_shell).running = 0;
+	return ((*my_shell).exit_status);
 }
 
 int	builtin_pwd(void)
@@ -87,7 +87,7 @@ int	builtin_echo(char **args)
 	return (0);
 }
 
-int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
+int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe, t_shell *my_shell)
 {
 	char	*builtin;
 
@@ -105,6 +105,6 @@ int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe)
 	else if (ft_strncmp(builtin, "env", 4) == 0)
 		return (builtin_env(exe));
 	else if (ft_strncmp(builtin, "exit", 5) == 0)
-		return (builtin_exit(cmd->args));
+		return (builtin_exit(cmd->args, shell));
 	return (-1);
 }

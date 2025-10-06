@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 17:11:41 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:29:52 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,9 @@ typedef struct s_shell
 	t_env_data				**env;
 	int						running;
 	int						exit_status;
-	volatile sig_atomic_t	signal_received;
 }							t_shell;
 
-extern t_shell				g_shell;
+extern volatile sig_atomic_t	sig;
 
 // Struct Exec
 typedef struct s_redir

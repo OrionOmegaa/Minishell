@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_parent.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpoirier <mpoirier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:01 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/09/26 17:30:01 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:38:05 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	free_cmd_list(t_cmd_data *lst)
 	}
 }
 
-void	last_status(t_cmd_data *cur)
+void	last_status(t_cmd_data *cur, t_shell *my_shell)
 {
 	int	status;
 	int	last;
@@ -53,5 +53,5 @@ void	last_status(t_cmd_data *cur)
 		}
 		cur = cur->next;
 	}
-	g_shell.exit_status = last;
+	(*my_shell).exit_status = last;
 }
