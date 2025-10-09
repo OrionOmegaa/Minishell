@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 17:12:11 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:44:26 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /* context struct in minishell.h */
 void	expand_core(t_expand_ctx *c);
 
-char	*expand_variables(char *input, t_env_data **env)
+static char	*expand_variables(char *input, t_env_data **env)
 {
 	t_expand_ctx	c;
 

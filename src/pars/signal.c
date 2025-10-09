@@ -6,26 +6,26 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 11:29:20 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 22:29:55 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:17:30 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_shell	g_shell = {NULL, 1, 0, 0};
+volatile sig_atomic_t    g_sig = 0;
 
 void	handle_signal(int sig)
 {
 	if (sig == SIGINT)
 	{
-		g_shell.signal_received = SIGINT;
+		g_sig = SIGINT;
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 	else if (sig == SIGTERM)
-		g_shell.signal_received = SIGTERM;
+		g_sig = SIGTERM;
 }
 
 void	init_signals(void)
@@ -37,14 +37,14 @@ void	init_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	cleanup_shell(void)
+void	cleanup_shell(t_shell *my_shell)
 {
 	t_env_data	*arr;
 	int			i;
 
-	if (!g_shell.env || !g_shell.env[0])
+	if (!(*my_shell).env || !(*my_shell).env[0])
 		return ;
-	arr = g_shell.env[0];
+	arr = (*my_shell).env[0];
 	i = -1;
 	while (arr[++i].key != NULL)
 	{
@@ -54,6 +54,6 @@ void	cleanup_shell(void)
 			free(arr[i].value);
 	}
 	free(arr);
-	free(g_shell.env);
-	g_shell.env = NULL;
+	free((*my_shell).env);
+	(*my_shell).env = NULL;
 }

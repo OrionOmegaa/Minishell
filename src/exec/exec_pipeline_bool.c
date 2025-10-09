@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 20:57:21 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:38:58 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:56:46 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	execute_single_builtin(t_exe_data *exe, t_cmd_data *cmds, t_shell *my_shell
 	if (cmds->next || !cmds->args || !is_env_builtin(cmds->args[0]))
 		return (false);
 	saved = (*my_shell).exit_status;
-	exec_builtin(cmds, exe);
+	exec_builtin(cmds, exe, my_shell);
 	if (!strcmp(cmds->args[0], "echo"))
 		(*my_shell).exit_status = saved;
 	free_cmd_list(cmds);
@@ -30,7 +30,7 @@ bool	execute_single_exit(t_cmd_data *cmds, t_shell *my_shell)
 {
 	if (cmds->next || !cmds->args || strcmp(cmds->args[0], "exit"))
 		return (false);
-	builtin_exit(cmds->args);
+	builtin_exit(cmds->args, my_shell);
 	free_cmd_list(cmds);
 	write(STDOUT_FILENO, "exit\n", 5);
 	(*my_shell).running = 0;

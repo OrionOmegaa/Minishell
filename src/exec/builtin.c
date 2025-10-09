@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:36:16 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:51:58 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,6 @@ int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe, t_shell *my_shell)
 	else if (ft_strncmp(builtin, "env", 4) == 0)
 		return (builtin_env(exe));
 	else if (ft_strncmp(builtin, "exit", 5) == 0)
-		return (builtin_exit(cmd->args, shell));
+		return (builtin_exit(cmd->args, my_shell));
 	return (-1);
 }

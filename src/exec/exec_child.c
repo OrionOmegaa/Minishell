@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 15:34:16 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:52:45 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	setup_child_io(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 	}
 }
 
-void	child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
+void	child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2], t_shell *my_shell)
 {
 	int	status;
 
@@ -49,7 +49,7 @@ void	child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 		close(fds[1]);
 	if (is_builtin(cmd->args[0]))
 	{
-		status = exec_builtin(cmd, exe);
+		status = exec_builtin(cmd, exe, my_shell);
 		exit(status);
 	}
 	execve(cmd->path, cmd->args, exe->envp);

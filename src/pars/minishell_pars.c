@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 09:28:06 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:03:48 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,30 +31,30 @@ void	clear_input_buffer(void)
 	tcsetattr(STDIN_FILENO, TCSANOW, &old_termios);
 }
 
-void	handle_line(char *line, t_env_data **env)
+static void	handle_line(char *line, t_shell *my_shell)
 {
 	t_pars_data	*pars;
 
 	add_history(line);
-	pars = init_pars_data(line);
+	pars = init_pars_data(line, my_shell);
 	if (pars)
-		executor(env, pars);
+		executor(my_shell, pars);
 	if (pars)
 		free_pars_data(pars);
 }
 
-void	minishell(t_env_data **env)
+void	minishell(t_shell *my_shell)
 {
 	char	*line;
 
-	while (g_shell.running)
+	while ((*my_shell).running)
 	{
-		if (g_shell.signal_received == SIGINT)
+		if (g_sig== SIGINT)
 		{
-			g_shell.signal_received = 0;
+			g_sig= 0;
 			continue ;
 		}
-		else if (g_shell.signal_received == SIGTERM)
+		else if (g_sig == SIGTERM)
 			break ;
 		line = readline("\001\033[1;36m\002Minishell> \001\033[0m\002");
 		if (!line)
@@ -63,7 +63,7 @@ void	minishell(t_env_data **env)
 			break ;
 		}
 		if (*line)
-			handle_line(line, env);
+			handle_line(line, my_shell);
 		free(line);
 	}
 }

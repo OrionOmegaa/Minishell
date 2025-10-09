@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:22:36 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:42:40 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:05:57 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_pars_data	*init_pars_data(char *line, t_shell *my_shell)
 
 	if (!line || !*line)
 		return (NULL);
-	if (check_syntax_errors(line))
+	if (check_syntax_errors(line, my_shell))
 	{
 		(*my_shell).exit_status = 2;
 		return (NULL);

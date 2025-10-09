@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:55:02 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:43:25 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:08:25 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ static int	check_body(char *trim, t_shell *my_shell)
 		if (trim[i] == '|' && !is_commands(trim, i + 1))
 		{
 			if (trim[i + 1] == '|' && !is_commands(trim, i + 2))
-				pipe_err(1);
+				pipe_err(1, my_shell);
 			else if (!is_commands(trim, i + 2))
-				pipe_err(0);
+				pipe_err(0, my_shell);
 			if ((*my_shell).exit_status == 2)
 				return (1);
 		}
@@ -50,7 +50,7 @@ static int	check_body(char *trim, t_shell *my_shell)
 
 int	final_syntax_check(char *trim, int len, t_shell *my_shell)
 {
-	if (check_body(trim, (*)))
+	if (check_body(trim, my_shell))
 		return (1);
 	if (len > 0)
 		return (0);

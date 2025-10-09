@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:41:46 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:35:44 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ int	main(int ac, char **av, char **envp)
 	if (!my_shell.env)
 		return (1);
 	my_shell.running = 1;
-	g_shell.signal_received = 0;
+	g_sig = 0;
 	init_signals();
 	minishell(&my_shell);
-	cleanup_shell();
+	cleanup_shell(&my_shell);
 	exit(my_shell.exit_status);
 }
 

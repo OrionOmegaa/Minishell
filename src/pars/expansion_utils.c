@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 17:08:26 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:14:19 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ static void	append_str(struct s_expand_ctx *c, char *s)
 	c->j += (int)len;
 }
 
-static int	expand_special(struct s_expand_ctx *c)
+static int	expand_special(struct s_expand_ctx *c, t_shell *my_shell)
 {
 	char	*tmp;
 
 	if (c->input[c->i] == '?')
 	{
-		tmp = ft_itoa(g_shell.exit_status);
+		tmp = ft_itoa((*my_shell).exit_status);
 		append_str(c, tmp);
 		free(tmp);
 		c->i++;
@@ -92,7 +92,7 @@ static void	expand_var(struct s_expand_ctx *c)
 	c->i += len;
 }
 
-void	expand_core(struct s_expand_ctx *c)
+void	expand_core(struct s_expand_ctx *c, t_shell *my_shell)
 {
 	while (c->input[c->i])
 	{
@@ -100,10 +100,10 @@ void	expand_core(struct s_expand_ctx *c)
 			c->i++;
 		else if (c->input[c->i] == '\x02')
 			c->i++;
-		else if (c->input[c->i] == '$' && !need_expand(c->input, c->i))
+		else if (c->input[c->i] == '$' && need_expand(c->input, c->i))
 		{
 			c->i++;
-			if (!expand_special(c))
+			if (!expand_special(c, my_shell))
 				expand_var(c);
 		}
 		else if (c->input[c->i] == '\\' && c->input[c->i + 1] == '$')
@@ -115,5 +115,5 @@ void	expand_core(struct s_expand_ctx *c)
 			c->res[c->j++] = c->input[c->i++];
 	}
 	c->res[c->j] = '\0';
-	bluff(&(c->res));
+	//bluff(&(c->res));
 }

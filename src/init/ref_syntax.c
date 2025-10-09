@@ -6,13 +6,13 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:23:38 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 10:36:03 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:07:43 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static int	edge_pipe(char *trim, int len)
+static int	edge_pipe(char *trim, int len, t_shell *my_shell)
 {
 	if (trim[0] == '|')
 	{
@@ -20,13 +20,13 @@ static int	edge_pipe(char *trim, int len)
 			printf("bash: syntax error near unexpected token `||'\n");
 		else
 			printf("bash: syntax error near unexpected token `|'\n");
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 		return (1);
 	}
 	if (len > 0 && trim[len - 1] == '|')
 	{
 		printf("bash: syntax error near unexpected token `newline'\n");
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 		return (1);
 	}
 	return (0);
@@ -40,7 +40,7 @@ static void	redir_pair_or_single(char *t, int pair, char c, int i)
 		printf("bash: syntax error near unexpected token `%c' \n", c);
 }
 
-static int	redir_edge(char *t, int len)
+static int	redir_edge(char *t, int len, t_shell *my_shell)
 {
 	int	f;
 
@@ -51,19 +51,19 @@ static int	redir_edge(char *t, int len)
 			printf("bash: syntax error near unexpected token `newline'\n");
 		else
 			redir_pair_or_single(t, (t[1] == '>' || t[1] == '<'), t[0], 0);
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 		return (1);
 	}
 	if (len > 1 && (t[f + 1] == '>' || t[f + 1] == '<'))
 	{
 		redir_pair_or_single(t, (t[f] == '>' || t[f] == '<'), t[f + 1], f);
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 		return (1);
 	}
 	return (0);
 }
 
-static int	second_quote(char *s)
+static int	second_quote(char *s, t_shell *my_shell)
 {
 	int		i;
 	bool	sq;
@@ -82,17 +82,17 @@ static int	second_quote(char *s)
 	if (s[i - 1] == '\\')
 	{
 		printf("bash: syntax error near unexpected token `newline'\n");
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 	}
 	if (sq || dq)
 	{
 		printf("bash: second quote not found\n");
-		g_shell.exit_status = 2;
+		(*my_shell).exit_status = 2;
 	}
 	return ((sq || dq || s[i - 1] == '\\'));
 }
 
-int	check_syntax_errors(char *line)
+int	check_syntax_errors(char *line, t_shell *my_shell)
 {
 	char	*trim;
 	int		len;
@@ -105,10 +105,10 @@ int	check_syntax_errors(char *line)
 	len = ft_strlen(trim);
 	if (!len)
 		return (free(trim), 0);
-	if (edge_pipe(trim, len)
-		|| redir_edge(trim, len)
-		|| final_syntax_check(trim, len)
-		|| second_quote(trim))
+	if (edge_pipe(trim, len, my_shell)
+		|| redir_edge(trim, len, my_shell)
+		|| final_syntax_check(trim, len, my_shell)
+		|| second_quote(trim, my_shell))
 		return (free(trim), 1);
 	free(trim);
 	return (0);

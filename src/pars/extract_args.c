@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:52:47 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 16:25:56 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:41:19 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ static void	skip_to_arg_end(const char **str, bool *in_quotes, char *quote_char)
 	}
 }
 
-char	*copy_arg_content(const char *start, int len);
-
 static char	*extract_one_arg(const char **str)
 {
 	const char	*start;
@@ -56,7 +54,7 @@ static char	*extract_one_arg(const char **str)
 	quote_char = 0;
 	skip_to_arg_end(str, &in_quotes, &quote_char);
 	len = *str - start;
-	return (copy_arg_content(start, len));
+	return (ft_strndup(start, len));
 }
 
 char	**extract_args(const char *raw_args)

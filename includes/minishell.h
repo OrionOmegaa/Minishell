@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:29:52 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:44:34 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ typedef struct s_shell
 	int						exit_status;
 }							t_shell;
 
-extern volatile sig_atomic_t	sig;
+extern volatile sig_atomic_t	g_sig;
 
 // Struct Exec
 typedef struct s_redir
@@ -120,26 +120,24 @@ void						exec(char *cmd, char **env);
 int							open_infiles(t_list *redir_in);
 int							open_outfiles(t_list *redir_out);
 int							is_builtin(const char *cmd);
-int							exec_builtin(t_cmd_data *cmd, t_exe_data *exe);
+int							exec_builtin(t_cmd_data *cmd, t_exe_data *exe, t_shell *my_shell);
 t_cmd_data					*cmd_new(char **args, char *path, int fd_in,
 								int fd_out);
 void						cmd_add_back(t_cmd_data **lst, t_cmd_data *new);
 t_env_data					**init_env(char **env);
-int							executor(t_env_data **env, t_pars_data *pars);
+int							executor(t_shell *my_shell, t_pars_data *pars);
 void						free_cmd(t_cmd_data *cmd);
 /* exec split components */
-t_cmd_data					*interpreter(t_pars_data *pars);
+t_cmd_data					*interpreter(t_pars_data *pars, t_shell *my_shell);
 void						child_process(t_exe_data *exe, t_cmd_data *cmd,
-								int fds[2]);
+								int fds[2], t_shell *my_shell);
 void						parent_process(t_exe_data *exe, t_cmd_data *cmd,
 								int fds[2]);
-void						last_status(t_cmd_data *cur);
+void						last_status(t_cmd_data *cur, t_shell *my_shell);
 void						free_cmd_list(t_cmd_data *lst);
-void						execute_pipeline(t_exe_data *exe,
-								t_pars_data *pars);
 bool						execute_single_builtin(t_exe_data *exe,
-								t_cmd_data *cmds);
-bool						execute_single_exit(t_cmd_data *cmds);
+								t_cmd_data *cmds, t_shell *my_shell);
+bool						execute_single_exit(t_cmd_data *cmds, t_shell *my_shell);
 bool						prepare_fds(t_cmd_data *cur, int fds[2]);
 
 /* ******************************** BUILTINS ******************************* */
@@ -148,10 +146,10 @@ int							builtin_pwd(void);
 int							builtin_export(char **args, t_exe_data *exe);
 int							builtin_unset(char **args, t_exe_data *exe);
 int							builtin_env(t_exe_data *exe);
-int							builtin_exit(char **args);
+int							builtin_exit(char **args, t_shell *my_shell);
 
 /* ******************************* PARSER API ****************************** */
-void						minishell(t_env_data **env);
+void						minishell(t_shell *shell);
 int							find_fd(char *file, int in_or_out);
 char						**extract_args(const char *raw_args);
 t_env_data					**env_set(t_env_data **env, char *key, char *value);
@@ -174,7 +172,7 @@ int							parse_command_line(t_pars_data *pars, char *line);
 void						free_redir(void *content);
 void						free_command_data(void *content);
 void						free_pars_data(t_pars_data *pars);
-t_pars_data					*init_pars_data(char *line);
+t_pars_data					*init_pars_data(char *line, t_shell *my_shell);
 char						**free_args_on_error(char **args, int count);
 int							pars_count_args(const char *str, int count);
 bool						need_expand(char *s, int len);
@@ -184,21 +182,20 @@ void						bluff(char **start);
 void						init_signals(void);
 void						handle_signal(int sig);
 void						free_env_data(t_env_data *env);
-void						cleanup_shell(void);
+void						cleanup_shell(t_shell *shell);
 int							env_len(t_env_data *env);
 int							is_known(t_env_data **env, char *key);
 int							is_env_builtin(const char *cmd);
 void						expand_args_array(char **args, t_env_data **env);
-char						*expand_variables(char *input, t_env_data **env);
 int							get_var_name_len(char *str);
 char						*get_env_value(t_env_data **env, char *key);
 int							cmd_count(t_list *lst);
-int							check_syntax_errors(char *line);
+int							check_syntax_errors(char *line, t_shell *my_shell);
 int							count_segments(char *line);
 int							iterate_segments(char *line, char **cmds);
 void						update_quote(char c, bool *in_q, char *q);
 int							iterate_segments_body(char *line, char **cmds);
-int							final_syntax_check(char *trim, int len);
+int							final_syntax_check(char *trim, int len, t_shell *my_shell);
 void						print_redir_pair(char a, char b);
 bool						is_commands(char *line, int i);
 #endif
