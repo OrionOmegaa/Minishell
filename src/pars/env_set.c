@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:58:23 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 19:42:45 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:55:30 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ static void	env_copy(t_env_data **env, char *key, int len, int i)
 	len = 0;
 	while ((*env)[++i].key != NULL)
 	{
-		if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) != 0)
+		if (ft_strncmp((*env)[i].key, key, INT_MAX) != 0)
 		{
 			res[len].key = (*env)[i].key;
 			res[len++].value = (*env)[i].value;

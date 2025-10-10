@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:53:37 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/08 17:44:34 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:25:15 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ void						exit_with_error(const char *msg, int code);
 int							count_args(char *input);
 int							free_exe(t_exe_data *exe, int ret_val,
 								int free_envp, char *err_msg);
+char						*ft_getenv(const char *var, t_shell *my_shell);
 
 /* ***************************** EXECUTION API ***************************** */
 t_exe_data					init_exe(t_env_data **env, t_pars_data *pars);
@@ -141,7 +142,7 @@ bool						execute_single_exit(t_cmd_data *cmds, t_shell *my_shell);
 bool						prepare_fds(t_cmd_data *cur, int fds[2]);
 
 /* ******************************** BUILTINS ******************************* */
-int							builtin_cd(char **args, t_exe_data *exe);
+int							builtin_cd(char **args, t_exe_data *exe, t_shell *my_shell);
 int							builtin_pwd(void);
 int							builtin_export(char **args, t_exe_data *exe);
 int							builtin_unset(char **args, t_exe_data *exe);
@@ -154,7 +155,7 @@ int							find_fd(char *file, int in_or_out);
 char						**extract_args(const char *raw_args);
 t_env_data					**env_set(t_env_data **env, char *key, char *value);
 t_env_data					**env_unset(t_env_data **env, char *key);
-char						*find_path(const char *cmd);
+char						*find_path(const char *cmd, t_shell *t_shell);
 int							ft_isspace(char c);
 int							is_syntax(char c);
 int							is_quote(char c);

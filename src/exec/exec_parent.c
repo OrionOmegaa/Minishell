@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:01 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:38:05 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:48:38 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ void	last_status(t_cmd_data *cur, t_shell *my_shell)
 	{
 		if (!cur->skip_cmd)
 		{
-			waitpid(cur->pid, &status, 0);
+			while (waitpid(cur->pid, &status, 0) < 0)
+				;
 			if (WIFEXITED(status))
 				last = WEXITSTATUS(status);
 		}

@@ -5,81 +5,73 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/14 18:52:47 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/08 17:41:19 by mpoirier         ###   ########.fr       */
+/*   Created: 2025/10/10 14:03:16 by mpoirier          #+#    #+#             */
+/*   Updated: 2025/10/10 15:01:34 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	skip_to_arg_end(const char **str, bool *in_quotes, char *quote_char)
+int	ft_isspace(char c)
 {
-	if (is_quote(**str))
-	{
-		*in_quotes = true;
-		*quote_char = (**str);
-		(*str)++;
-	}
-	while (**str)
-	{
-		if (is_quote(**str))
-		{
-			if (*in_quotes && *quote_char == **str)
-				*in_quotes = !(*in_quotes);
-			else if (!(*in_quotes)) 
-			{
-				*quote_char = **str;
-				*in_quotes = !(*in_quotes);
-			}
-		}
-		else if (!(*in_quotes) && ft_isspace(**str))
-			break;
-		(*str)++;
-	}
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
+		|| c == '\v');
 }
 
-static char	*extract_one_arg(const char **str)
+int	is_quote(char c)
 {
-	const char	*start;
-	int			len;
-	bool		in_quotes;
-	char		quote_char;
-
-	while (**str && ft_isspace(**str))
-		(*str)++;
-	if (!**str)
-		return (NULL);
-	start = *str;
-	in_quotes = 0;
-	quote_char = 0;
-	skip_to_arg_end(str, &in_quotes, &quote_char);
-	len = *str - start;
-	return (ft_strndup(start, len));
+	return (c == '"' || c == 39);
 }
 
-char	**extract_args(const char *raw_args)
+void print_res(char *res)
 {
-	char		**args;
-	const char	*current;
-	int			argc;
-	int			i;
+    int i = -1;
+    while (res[++i])
+    {
+        if (res[i] == '\x1D')
+            write(1, "(SP)", 4);
+        else
+            write(1, &res[i], 1);
+    }
+    write(1, "\n", 1);
+}
 
-	if (!raw_args)
-		return (NULL);
-	argc = pars_count_args(raw_args, 0);
-	if (argc == 0)
-		return (NULL);
-	args = malloc((argc + 1) * sizeof(char *));
-	if (!args)
-		return (NULL);
-	current = raw_args;
-	i = -1;
-	while ((++i) < argc)
-	{
-		args[i] = extract_one_arg(&current);
-		if (!args[i])
-			return (free_args_on_error(args, i));
-	}
-	args[i] = NULL;
-	return (args);
+char	**extract_args(const char *str)
+{
+	char	*res;
+    char	cq;
+    bool	quotes;
+	int		i;
+    int     j;
+
+    printf("raw_args = [%s]\n", str);
+    i = -1;
+    j = 0;
+    res = malloc((ft_strlen(str) * 4 + 1) * sizeof(char));
+    quotes = false;
+    while (str[++i])
+    {
+        if (quotes == false && is_quote(str[i]))
+        {
+            quotes = true;
+            cq = str[i];
+            res[j++] = '\x1D'; 
+        }
+        else if (quotes == true && str[i] == cq && (str[i+1] && ft_isspace(str[i+1])))
+        {
+            quotes = false;
+            res[j++] = str[i];
+            res[j++] = '\x1D';
+            continue ;
+        }
+        else if (quotes == false && ft_isspace(str[i]))
+        {
+            res[j++] = '\x1D';
+            continue ;
+        }
+        res[j++] = str[i];
+    }
+    res[j++] = '\0';
+    print_res(res);
+    return(ft_split(res, '\x1D'));
 }

@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/08 17:38:43 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:55:53 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_env_value(t_env_data **env, char *key)
 		return (NULL);
 	i = -1;
 	while ((*env)[++i].key)
-		if (!ft_strncmp((*env)[i].key, key, ft_strlen(key))
+		if (!ft_strncmp((*env)[i].key, key, INT_MAX)
 			&& ft_strlen((*env)[i].key) == ft_strlen(key))
 			return ((*env)[i].value);
 	return (NULL);

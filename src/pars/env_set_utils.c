@@ -19,7 +19,7 @@ int	is_known(t_env_data **env, char *key)
 	i = -1;
 	while ((*env)[++i].key != NULL)
 	{
-		if (ft_strncmp((*env)[i].key, key, ft_strlen(key)) == 0
+		if (ft_strncmp((*env)[i].key, key, INT_MAX) == 0
 			&& ft_strlen((*env)[i].key) == ft_strlen(key))
 			return (i);
 	}

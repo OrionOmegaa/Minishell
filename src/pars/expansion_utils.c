@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/08 17:14:19 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:26:52 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,26 +94,21 @@ static void	expand_var(struct s_expand_ctx *c)
 
 void	expand_core(struct s_expand_ctx *c, t_shell *my_shell)
 {
-	while (c->input[c->i])
+	while ((*c).input[(*c).i])
 	{
-		if (c->input[c->i] == '\x01')
-			c->i++;
-		else if (c->input[c->i] == '\x02')
-			c->i++;
-		else if (c->input[c->i] == '$' && need_expand(c->input, c->i))
+		if ((*c).input[(*c).i] == '$' && need_expand((*c).input, (*c).i))
 		{
-			c->i++;
+			(*c).i++;
 			if (!expand_special(c, my_shell))
 				expand_var(c);
 		}
-		else if (c->input[c->i] == '\\' && c->input[c->i + 1] == '$')
+		else if ((*c).input[(*c).i] == '\\' && (*c).input[(*c).i + 1] == '$')
 		{
-			c->res[c->j++] = '$';
-			c->i += 2;
+			(*c).res[((*c).j)++] = '$';
+			(*c).i += 2;
 		}
 		else
-			c->res[c->j++] = c->input[c->i++];
+			(*c).res[((*c).j)++] = (*c).input[((*c).i)++];
 	}
-	c->res[c->j] = '\0';
-	//bluff(&(c->res));
+	(*c).res[(*c).j] = '\0';
 }

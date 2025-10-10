@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   find_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 17:53:44 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/06/16 17:53:44 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:14:07 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static char	*parsing_first(const char *start, const char *cmd)
 	return (NULL);
 }
 
-char	*find_path(const char *cmd)
+char	*find_path(const char *cmd, t_shell *my_shell)
 {
 	char		*path_env;
 	const char	*copy_path;
@@ -96,10 +96,12 @@ char	*find_path(const char *cmd)
 
 	if (ft_strchr(cmd, '/'))
 		return (NULL);
-	path_env = getenv("PATH");
+	path_env = ft_getenv("PATH", my_shell);
 	if (!path_env)
 		return (NULL);
 	copy_path = path_env;
 	full_path = parsing_first((const char *)copy_path, cmd);
+	if (path_env)
+		free(path_env);
 	return (full_path);
 }

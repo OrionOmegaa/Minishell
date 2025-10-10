@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:57:29 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/07 19:03:48 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:32:03 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,35 @@ void	minishell(t_shell *my_shell)
 			handle_line(line, my_shell);
 		free(line);
 	}
+}
+
+
+/* UTILS */
+
+char	*ft_getenv(const char *var, t_shell *my_shell)
+{
+	//dprintf(2, "entering ft_getenv for %s\n", var); //debug
+	int			i;
+	char		*res;
+	t_env_data	tmp;
+
+	if (!ft_strncmp(var, "?", 2))
+		return (ft_itoa((*my_shell).exit_status));
+	if (!ft_strncmp(var, "0", 2))
+		return (ft_strdup("HEY(!)SHELL 🪜"));
+	i = 0;
+	//dprintf(2, "no special var name\n"); //debug
+	tmp = (*(*my_shell).env)[i];
+	//dprintf(2, "tmp at %p\n", tmp); //debug
+	while (tmp.key != NULL)
+	{
+		//dprintf(2, "tmp key is %s", tmp.key); //debug
+		if (!ft_strncmp(tmp.key, var, INT_MAX))
+		{
+			res = ft_strdup(tmp.value);
+			return (res);
+		}
+		tmp = (*(*my_shell).env)[++i];
+	}
+	return (NULL);
 }

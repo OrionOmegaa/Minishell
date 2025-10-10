@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 19:15:45 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:53:34 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	sort_env(t_env_data **env)
 		while ((*env)[++j].key != NULL)
 		{
 			tmp = (*env)[i];
-			if (ft_strncmp(tmp.key, (*env)[j].key, ft_strlen(tmp.key)) > 0)
+			if (ft_strncmp(tmp.key, (*env)[j].key, INT_MAX) > 0)
 			{
 				(*env)[i] = (*env)[j];
 				(*env)[j] = tmp;

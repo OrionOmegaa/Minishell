@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/06 16:37:23 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:08:16 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out, t_
 	if (!args)
 		return (NULL);
 	expand_args_array(args, (*my_shell).env);
-	path = find_path(args[0]);
+	path = find_path(args[0], my_shell);
 	if (!path)
 		path = ft_strdup(args[0]);
 	node = cmd_new(args, path, fd_in, fd_out);

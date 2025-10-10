@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/07 18:51:58 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:13:48 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ int	builtin_pwd(void)
 	return (1);
 }
 
-int	builtin_cd(char **args, t_exe_data *exe)
+int	builtin_cd(char **args, t_exe_data *exe, t_shell *my_shell)
 {
 	char	*path;
 	char	cwd[1024];
 
 	if (!args[1])
-		path = getenv("HOME");
+		path = ft_getenv("HOME", my_shell);
 	else
 		path = args[1];
 	if (!path)
@@ -55,6 +55,8 @@ int	builtin_cd(char **args, t_exe_data *exe)
 	}
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		env_set(exe->env, "PWD", cwd);
+	if(!args[1])
+		free(path);
 	return (0);
 }
 
@@ -92,19 +94,19 @@ int	exec_builtin(t_cmd_data *cmd, t_exe_data *exe, t_shell *my_shell)
 	char	*builtin;
 
 	builtin = cmd->args[0];
-	if (ft_strncmp(builtin, "echo", 5) == 0)
+	if (ft_strncmp(builtin, "echo", INT_MAX) == 0)
 		return (builtin_echo(cmd->args));
-	else if (ft_strncmp(builtin, "cd", 3) == 0)
-		return (builtin_cd(cmd->args, exe));
-	else if (ft_strncmp(builtin, "pwd", 4) == 0)
+	else if (ft_strncmp(builtin, "cd", INT_MAX) == 0)
+		return (builtin_cd(cmd->args, exe, my_shell));
+	else if (ft_strncmp(builtin, "pwd", INT_MAX) == 0)
 		return (builtin_pwd());
-	else if (ft_strncmp(builtin, "export", 7) == 0)
+	else if (ft_strncmp(builtin, "export", INT_MAX) == 0)
 		return (builtin_export(cmd->args, exe));
-	else if (ft_strncmp(builtin, "unset", 6) == 0)
+	else if (ft_strncmp(builtin, "unset", INT_MAX) == 0)
 		return (builtin_unset(cmd->args, exe));
-	else if (ft_strncmp(builtin, "env", 4) == 0)
+	else if (ft_strncmp(builtin, "env", INT_MAX) == 0)
 		return (builtin_env(exe));
-	else if (ft_strncmp(builtin, "exit", 5) == 0)
+	else if (ft_strncmp(builtin, "exit", INT_MAX) == 0)
 		return (builtin_exit(cmd->args, my_shell));
 	return (-1);
 }
