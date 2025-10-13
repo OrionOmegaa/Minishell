@@ -6,11 +6,32 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/07 18:52:45 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 17:57:57 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static int	is_builtin(const char *cmd)
+{
+	if (!cmd)
+		return (0);
+	if (ft_strncmp(cmd, "echo", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "cd", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "pwd", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "export", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "unset", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "env", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "exit", INT_MAX) == 0)
+		return (1);
+	return (0);
+}
 
 static void	setup_child_io(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 {
@@ -36,7 +57,8 @@ static void	setup_child_io(t_exe_data *exe, t_cmd_data *cmd, int fds[2])
 	}
 }
 
-void	child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2], t_shell *my_shell)
+void	child_process(t_exe_data *exe, t_cmd_data *cmd, int fds[2],
+	t_shell *my_shell)
 {
 	int	status;
 

@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/09 14:13:48 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:48:53 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@ int	builtin_exit(char **args, t_shell *my_shell)
 		(*my_shell).exit_status = ft_atoi(args[1]);
 	(*my_shell).running = 0;
 	return ((*my_shell).exit_status);
-}
-
-int	builtin_pwd(void)
-{
-	char	cwd[1024];
-
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		ft_printf("%s\n", cwd);
-		return (0);
-	}
-	perror("pwd");
-	return (1);
 }
 
 int	builtin_cd(char **args, t_exe_data *exe, t_shell *my_shell)
@@ -55,9 +42,32 @@ int	builtin_cd(char **args, t_exe_data *exe, t_shell *my_shell)
 	}
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		env_set(exe->env, "PWD", cwd);
-	if(!args[1])
+	if (!args[1])
 		free(path);
 	return (0);
+}
+
+static void	boucle_echo(char **args, int i)
+{
+	int	j;
+
+	while (args[++i])
+	{
+		if (is_quote(args[i][0]))
+		{
+			j = 0;
+			while (args[i][++j])
+			{
+				if (args[i][j] == args[i][0])
+					continue ;
+				ft_printf("%c", args[i][j]);
+			}
+		}
+		else
+			ft_printf("%s", args[i]);
+		if (args[i + 1])
+			ft_printf(" ");
+	}
 }
 
 int	builtin_echo(char **args)
@@ -78,12 +88,7 @@ int	builtin_echo(char **args)
 		no_newline = true;
 	}
 	i--;
-	while (args[++i])
-	{
-		ft_printf("%s", args[i]);
-		if (args[i + 1])
-			ft_printf(" ");
-	}
+	boucle_echo(args, i);
 	if (!no_newline)
 		ft_printf("\n");
 	return (0);

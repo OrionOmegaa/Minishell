@@ -6,13 +6,13 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/09 13:53:34 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:20:19 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	sort_env(t_env_data **env)
+static void	sort_env(t_env_data **env)
 {
 	int			i;
 	int			j;

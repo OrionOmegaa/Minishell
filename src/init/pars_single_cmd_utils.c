@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 21:45:31 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/03 16:44:19 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:04:51 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 
 int	psc_copy_plain(char *src, char *dst, int i, int *j)
 {
-	if (src[i] && src[i] != '<' && src[i] != '>' && !is_quote(src[i]))
+	if (src[i] && !is_quote(src[i]) && src[i] != '<' && src[i] != '>')
 	{
-		dst[*j] = src[i];
-		(*j)++;
+		dst[(*j)++] = src[i];
 		return (i + 1);
 	}
 	return (i);

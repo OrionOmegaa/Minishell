@@ -6,13 +6,13 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 11:29:20 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/09 15:53:25 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:59:46 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-volatile sig_atomic_t    g_sig = 0;
+volatile sig_atomic_t	g_sig = 0;
 
 void	handle_signal(int sig)
 {

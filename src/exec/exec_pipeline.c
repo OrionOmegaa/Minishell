@@ -6,13 +6,26 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:01 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/07 19:01:11 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:50:17 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	fork_process(t_exe_data *exe, t_cmd_data *cur, int fds[2], t_shell *my_shell)
+static t_exe_data	init_exe(t_env_data **env, t_pars_data *pars)
+{
+	t_exe_data	exe;
+
+	exe.env = env;
+	exe.pars = pars;
+	exe.prev_pipe = -1;
+	exe.cmds = NULL;
+	exe.envp = init_envp(*env);
+	return (exe);
+}
+
+void	fork_process(t_exe_data *exe, t_cmd_data *cur, int fds[2],
+	t_shell *my_shell)
 {
 	cur->pid = fork();
 	if (cur->pid < 0)
@@ -23,7 +36,8 @@ void	fork_process(t_exe_data *exe, t_cmd_data *cur, int fds[2], t_shell *my_shel
 		parent_process(exe, cur, fds);
 }
 
-static void	execute_pipeline(t_exe_data *exe, t_pars_data *pars, t_shell *my_shell)
+static void	execute_pipeline(t_exe_data *exe, t_pars_data *pars,
+	t_shell *my_shell)
 {
 	t_cmd_data	*cmds;
 	t_cmd_data	*cur;

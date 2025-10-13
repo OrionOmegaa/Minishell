@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 17:30:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/09 14:08:16 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:45:06 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ static char	**duplicate_args(char **src)
 	return (dst);
 }
 
-static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out, t_shell *my_shell)
+static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out,
+	t_shell *my_shell)
 {
 	char		**args;
 	char		*path;
@@ -74,18 +75,18 @@ t_cmd_data	*interpreter(t_pars_data *pars, t_shell *my_shell)
 	t_command_data	*cur;
 	t_cmd_data		*cmds;
 	t_cmd_data		*node;
-	int				fds_and_skip[3];
+	int				fds_skip[3];
 
 	cmds = NULL;
 	lst = pars->commands;
 	while (lst)
 	{
 		cur = (t_command_data *)lst->content;
-		fds_and_skip[2] = 0;
-		open_files(cur, &fds_and_skip[0], &fds_and_skip[1], &fds_and_skip[2]);
-		if (!fds_and_skip[2])
+		fds_skip[2] = 0;
+		open_files(cur, &fds_skip[0], &fds_skip[1], &fds_skip[2]);
+		if (!fds_skip[2])
 		{
-			node = build_cmd_node(cur, fds_and_skip[0], fds_and_skip[1], my_shell);
+			node = build_cmd_node(cur, fds_skip[0], fds_skip[1], my_shell);
 			if (node)
 				cmd_add_back(&cmds, node);
 		}

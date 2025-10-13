@@ -6,11 +6,24 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:46:32 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/02 19:17:44 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:45:37 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static void	envp_copy(char **envp, char *value, t_env_data env)
+{
+	int	len;
+
+	len = ft_strlen(env.key);
+	ft_strlcpy((*envp), env.key, len);
+	(*envp)[len] = '=';
+	if (value)
+		ft_strlcpy((*envp) + len + 1, value, ft_strlen(value));
+	else
+		ft_strlcpy((*envp) + len + 1, (char *)"(NULL)", 6);
+}
 
 char	**init_envp(t_env_data *env)
 {
@@ -29,27 +42,16 @@ char	**init_envp(t_env_data *env)
 	{
 		len = ft_strlen(env[i].key);
 		value = env[i].value;
-		envp[i] = malloc(len + ft_strlen(value) + 2);
+		if (value)
+			envp[i] = malloc(len + ft_strlen(value) + 2);
+		else
+			envp[i] = malloc(len + 8);
 		if (!envp[i])
 			return (NULL);
-		ft_strlcpy(envp[i], env[i].key, len);
-		envp[i][len] = '=';
-		ft_strlcpy(envp[i] + len + 1, value, ft_strlen(value));
+		envp_copy(&envp[i], value, env[i]);
 	}
 	envp[i] = NULL;
 	return (envp);
-}
-
-t_exe_data	init_exe(t_env_data **env, t_pars_data *pars)
-{
-	t_exe_data	exe;
-
-	exe.env = env;
-	exe.pars = pars;
-	exe.prev_pipe = -1;
-	exe.cmds = NULL;
-	exe.envp = init_envp(*env);
-	return (exe);
 }
 
 static t_env_data	**free_error(t_env_data *arr, int count)

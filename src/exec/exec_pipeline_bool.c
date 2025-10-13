@@ -6,13 +6,40 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 20:57:21 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/07 18:56:46 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:50:47 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-bool	execute_single_builtin(t_exe_data *exe, t_cmd_data *cmds, t_shell *my_shell)
+int	builtin_pwd(void)
+{
+	char	cwd[1024];
+
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	{
+		ft_printf("%s\n", cwd);
+		return (0);
+	}
+	perror("pwd");
+	return (1);
+}
+
+static int	is_env_builtin(const char *cmd)
+{
+	if (!cmd)
+		return (0);
+	if (ft_strncmp(cmd, "cd", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "unset", INT_MAX) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "export", INT_MAX) == 0)
+		return (1);
+	return (0);
+}
+
+bool	execute_single_builtin(t_exe_data *exe, t_cmd_data *cmds,
+	t_shell *my_shell)
 {
 	int	saved;
 

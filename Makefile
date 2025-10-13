@@ -8,13 +8,13 @@ CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g -lreadline
 
 FILES= $(EXEC)/builtin_utils.c $(EXEC)/builtin.c $(EXEC)/exec_build.c \
 	$(EXEC)/exec_child.c  $(EXEC)/exec_init.c $(EXEC)/exec_parent.c  \
-	$(EXEC)/exec_pipeline_bool.c $(EXEC)/exec_pipeline.c $(EXEC)/is_builtin.c \
-	$(EXEC)/minishell_utils.c $(EXEC)/minishell.c $(EXEC)/node.c $(EXEC)/open.c \
-	$(INIT)/ref_free.c $(INIT)/ref_init.c $(INIT)/ref_pars_single_command_redir.c \
-	$(INIT)/ref_pars_single_command_utils.c $(INIT)/ref_pars_single_command.c \
-	$(INIT)/ref_parse_line.c $(INIT)/ref_redir.c $(INIT)/ref_split_pipes_iter.c \
-	$(INIT)/ref_split_pipes_utils.c $(INIT)/ref_split_pipes.c $(INIT)/ref_syntax_checks.c \
-	$(INIT)/ref_syntax_utils.c $(INIT)/ref_syntax.c $(INIT)/ref_token.c \
+	$(EXEC)/exec_pipeline_bool.c $(EXEC)/exec_pipeline.c $(EXEC)/open.c \
+	$(EXEC)/minishell_utils.c $(EXEC)/minishell.c $(EXEC)/node.c \
+	$(INIT)/free.c $(INIT)/init.c $(INIT)/pars_single_cmd_redir.c \
+	$(INIT)/pars_single_cmd_utils.c $(INIT)/pars_single_cmd.c \
+	$(INIT)/parse_line.c $(INIT)/redirection.c $(INIT)/split_pipes_iter.c \
+	$(INIT)/split_pipes_utils.c $(INIT)/split_pipes.c \
+	$(INIT)/syntax_checks.c $(INIT)/syntax_utils.c $(INIT)/syntax.c \
 	$(PARS)/env_set_utils.c $(PARS)/env_set.c $(PARS)/expansion_core.c \
 	$(PARS)/expansion_env.c $(PARS)/expansion_utils.c \
 	$(PARS)/extract_args.c $(PARS)/fd.c $(PARS)/find_path.c \
