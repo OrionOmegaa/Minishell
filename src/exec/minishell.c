@@ -21,6 +21,7 @@ int	main(int ac, char **av, char **envp)
 	my_shell.env = init_env(envp);
 	if (!my_shell.env)
 		return (1);
+	my_shell.exit_status = 0;
 	my_shell.running = 1;
 	g_sig = 0;
 	init_signals();

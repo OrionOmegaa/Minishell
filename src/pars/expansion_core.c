@@ -13,9 +13,9 @@
 #include "../../includes/minishell.h"
 
 /* context struct in minishell.h */
-void	expand_core(t_expand_ctx *c);
+void	expand_core(t_expand_ctx *c, t_shell *my_shell);
 
-static char	*expand_variables(char *input, t_env_data **env)
+static char	*expand_variables(char *input, t_env_data **env, t_shell *my_shell)
 {
 	t_expand_ctx	c;
 
@@ -29,11 +29,11 @@ static char	*expand_variables(char *input, t_env_data **env)
 		return (NULL);
 	c.i = 0;
 	c.j = 0;
-	expand_core(&c);
+	expand_core(&c, my_shell);
 	return (c.res);
 }
 
-void	expand_args_array(char **args, t_env_data **env)
+void	expand_args_array(char **args, t_env_data **env, t_shell *my_shell)
 {
 	int				i;
 	char			*expanded;
@@ -43,7 +43,7 @@ void	expand_args_array(char **args, t_env_data **env)
 	i = -1;
 	while (args[++i])
 	{
-		expanded = expand_variables(args[i], env);
+		expanded = expand_variables(args[i], env, my_shell);
 		if (expanded)
 		{
 			free(args[i]);

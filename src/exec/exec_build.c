@@ -51,7 +51,7 @@ static t_cmd_data	*build_cmd_node(t_command_data *cur, int fd_in, int fd_out,
 	args = duplicate_args(cur->raw_args);
 	if (!args)
 		return (NULL);
-	expand_args_array(args, (*my_shell).env);
+	expand_args_array(args, (*my_shell).env, my_shell);
 	path = find_path(args[0], my_shell);
 	if (!path)
 		path = ft_strdup(args[0]);
