@@ -6,7 +6,7 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 13:40:00 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/09 13:55:53 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:10:32 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,17 @@ int	get_var_name_len(char *str)
 		&& (ft_isalnum(str[len]) || str[len] == '_'))
 		len++;
 	return (len);
+}
+
+/* UTILS */
+
+int	ft_isspace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
+		|| c == '\v');
+}
+
+int	is_quote(char c)
+{
+	return (c == '"' || c == 39);
 }

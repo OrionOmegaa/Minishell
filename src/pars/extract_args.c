@@ -6,23 +6,11 @@
 /*   By: mpoirier <mpoirier@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 14:03:16 by mpoirier          #+#    #+#             */
-/*   Updated: 2025/10/13 17:50:51 by mpoirier         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:14:50 by mpoirier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
-		|| c == '\v');
-}
-
-int	is_quote(char c)
-{
-	return (c == '"' || c == 39);
-}
-
 /*void	print_res(char *res)
 {
 	int	i;
@@ -37,6 +25,7 @@ int	is_quote(char c)
 	}
 	write(1, "\n", 1);
 }*/
+
 static bool	quote(bool *q, char *cq, char s, char r)
 {
 	if ((*q) == false && is_quote(s))
